@@ -1,4 +1,4 @@
-package org.lenuscreations.letlib.file;
+package org.lenuscreations.lelib.file;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -1,8 +1,8 @@
-package org.lenuscreations.letlib.file;
+package org.lenuscreations.lelib.file;
 
 import lombok.Builder;
 import lombok.Data;
-import org.lenuscreations.letlib.file.value.ConfigValue;
+import org.lenuscreations.lelib.file.value.ConfigValue;
 
 import java.util.List;
 

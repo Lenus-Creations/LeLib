@@ -1,4 +1,4 @@
-package org.lenuscreations.letlib.file.value;
+package org.lenuscreations.lelib.file.value;
 
 public interface ConfigValue<T> {
 
