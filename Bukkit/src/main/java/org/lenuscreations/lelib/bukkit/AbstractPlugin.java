@@ -7,6 +7,7 @@ public abstract class AbstractPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         super.onEnable();
+
     }
 
     @Override
