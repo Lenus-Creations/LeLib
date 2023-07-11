@@ -8,6 +8,8 @@ public interface IServer {
 
     int getPlayerCount();
 
+    int getPlayerCount(boolean countInvisiblePlayers);
+
     int getMaxPlayerCount();
 
     void broadcast(String message);

@@ -1,3 +1,0 @@
-name: Bukkit
-version: '${project.version}'
-main: org.lenuscreations.bukkit.Bukkit
