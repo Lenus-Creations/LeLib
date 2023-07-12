@@ -9,8 +9,10 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
+        <module>Bukkit</module>
         <module>Core</module>
         <module>JDA</module>
+        <module>build</module>
     </modules>
 
     <properties>

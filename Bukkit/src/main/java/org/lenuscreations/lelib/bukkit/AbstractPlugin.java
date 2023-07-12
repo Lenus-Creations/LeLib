@@ -9,15 +9,27 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import org.lenuscreations.lelib.bukkit.event.EventManager;
+import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
 import org.lenuscreations.lelib.bukkit.server.IServer;
 import org.lenuscreations.lelib.bukkit.utils.ClassUtils;
 import org.lenuscreations.lelib.database.IDatabase;
 
+import java.lang.reflect.Method;
+
 public abstract class AbstractPlugin extends JavaPlugin {
+
+    @Getter
+    private static AbstractPlugin instance;
 
     @Nullable
     @Getter
     private IDatabase<?, ?> currentDatabase = null;
+
+    @Getter
+    private EventManager eventHandler;
+    @Getter
+    private GUIHandler guiHandler;
 
     public IServer server;
 
@@ -25,7 +37,11 @@ public abstract class AbstractPlugin extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
 
-        server = new IServer() {
+        instance = this;
+
+        this.eventHandler = new EventManager();
+        this.guiHandler = new GUIHandler();
+        this.server = new IServer() {
 
             @Override
             public int getPlayerCount() {
@@ -101,8 +117,16 @@ public abstract class AbstractPlugin extends JavaPlugin {
         super.onDisable();
     }
 
-    public final void registerCommand() {
+    public final void registerCommand(Class<?> clazz) {
 
+    }
+
+    public final void addListener(Class<?> clazz) {
+        this.eventHandler.register(clazz);
+    }
+
+    public final void addListener(Method method) {
+        this.eventHandler.register(method);
     }
 
     @SneakyThrows
