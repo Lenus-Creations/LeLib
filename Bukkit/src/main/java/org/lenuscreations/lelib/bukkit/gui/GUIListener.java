@@ -34,7 +34,6 @@ public class GUIListener {
 
         listeners.forEach(listener -> {
             ClickListener clickListener = listener.getAnnotation(ClickListener.class);
-            AbstractPlugin.getInstance().server.log(clickListener.itemName());
 
             if (clickListener.clickTypes().length != 0 && !Arrays.asList(clickListener.clickTypes()).contains(e.getClick())) {
                 e.setCancelled(true);
@@ -47,7 +46,7 @@ public class GUIListener {
 
             if (slots.length == 0) {
                 ItemStack clickedItem = e.getCurrentItem();
-                if (clickedItem.getItemMeta() == null) {
+                if (clickedItem.getItemMeta() == null || !clickedItem.getItemMeta().hasDisplayName()) {
                     e.setCancelled(true);
                     return;
                 }

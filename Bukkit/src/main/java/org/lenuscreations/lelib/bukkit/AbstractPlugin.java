@@ -9,11 +9,12 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import org.lenuscreations.lelib.bukkit.command.CommandHandler;
+import org.lenuscreations.lelib.bukkit.command.test.TestCommands;
 import org.lenuscreations.lelib.bukkit.event.EventManager;
 import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
 import org.lenuscreations.lelib.bukkit.server.IServer;
-import org.lenuscreations.lelib.bukkit.test_commands.TestCommands;
 import org.lenuscreations.lelib.bukkit.utils.Util;
 import org.lenuscreations.lelib.database.IDatabase;
 
@@ -122,7 +123,8 @@ public class AbstractPlugin extends JavaPlugin {
 
         this.addListener(GUIListener.class);
 
-        getCommand("test").setExecutor(new TestCommands());
+        CommandHandler.init();
+        registerCommand(TestCommands.class);
     }
 
     @Override
@@ -131,7 +133,7 @@ public class AbstractPlugin extends JavaPlugin {
     }
 
     public final void registerCommand(Class<?> clazz) {
-
+        CommandHandler.register(clazz);
     }
 
     public final void addListener(Class<?> clazz) {
@@ -139,7 +141,7 @@ public class AbstractPlugin extends JavaPlugin {
     }
 
     @SneakyThrows
-    public void setDatabase(Class<? extends IDatabase<?, ?>> instance) {
+    public final void setDatabase(Class<? extends IDatabase<?, ?>> instance) {
         this.currentDatabase = instance.getDeclaredConstructor().newInstance();
         getLogger().info("The database has been set to " + this.currentDatabase + ".");
     }

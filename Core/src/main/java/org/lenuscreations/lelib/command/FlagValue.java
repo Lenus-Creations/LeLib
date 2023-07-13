@@ -6,15 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface SubCommand {
+@Target(ElementType.PARAMETER)
+public @interface FlagValue {
 
-    String name();
+    String valueName();
 
-    String of();
+    String flagName();
 
-    String description();
-
-    String permission();
-    
 }

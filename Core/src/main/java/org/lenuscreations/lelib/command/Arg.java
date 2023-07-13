@@ -6,17 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Command {
+@Target(ElementType.PARAMETER)
+public @interface Arg {
 
     String name();
 
-    String[] aliases() default {};
+    String defaultValue() default "";
 
-    String description() default "";
-
-    String permission() default "";
-
-    boolean async() default false;
+    boolean wildcard() default false;
 
 }

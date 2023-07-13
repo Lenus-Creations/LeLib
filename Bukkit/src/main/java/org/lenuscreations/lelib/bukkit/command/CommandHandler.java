@@ -1,18 +1,109 @@
 package org.lenuscreations.lelib.bukkit.command;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
+import lombok.Getter;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.SimplePluginManager;
+import org.lenuscreations.lelib.bukkit.AbstractPlugin;
+import org.lenuscreations.lelib.bukkit.command.parameters.BooleanParameter;
+import org.lenuscreations.lelib.command.Command;
+import org.lenuscreations.lelib.command.ParameterType;
+import org.lenuscreations.lelib.bukkit.command.parameters.StringParameter;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CommandHandler {
 
-    private CommandMap map;
+    private static boolean initialised = false;
 
-    public CommandHandler() {
-        this.map = Bukkit.getServer().getCommandMap();
+    @Getter
+    private static Map<Class<?>, ParameterType<?, CommandSender>> parameterTypes = new HashMap<>();
+    protected static List<CommandNode> nodes = new ArrayList<>();
+
+    public static String NO_PERMISSION_MESSAGE;
+    public static String CONSOLE_ONLY_MESSAGE;
+    public static String PLAYER_ONLY_MESSAGE;
+
+
+    private static CommandMap map;
+
+    @SneakyThrows
+    private static void refreshMap() {
+        if (Bukkit.getPluginManager() instanceof SimplePluginManager) {
+            SimplePluginManager spm = (SimplePluginManager) Bukkit.getPluginManager();
+
+            Field commandMap = spm.getClass().getDeclaredField("commandMap");
+            commandMap.setAccessible(true);
+
+            map = (CommandMap) commandMap.get(spm);
+        }
     }
 
-    public void register(CommandNode node) {
-        map.register(node.getName(), new BukkitCommand(node));
+    @SneakyThrows
+    public static void register(Class<?> clazz) {
+        Object instance = clazz.getDeclaredConstructor().newInstance();
+        for (Method method : clazz.getDeclaredMethods()) {
+            Command command = method.getDeclaredAnnotation(Command.class);
+            if (command == null) continue;
+
+            String name = command.name();
+            if (!name.contains(" ")) {
+                CommandNode node = new CommandNode(method, command, instance);
+                registerNode(node);
+            }
+
+            for (Method child : clazz.getDeclaredMethods()) {
+                Command childCommand = child.getDeclaredAnnotation(Command.class);
+                if (childCommand == null) continue;
+
+                String childName = childCommand.name();
+                if (childName.contains(" ")) {
+                    String parent = childName.substring(0, childName.indexOf(" "));
+                    childName = childName.substring(childName.indexOf(" ") + 1);
+
+                    CommandNode foundParent = nodes.stream().filter(node -> node.getName().equals(parent)).findFirst().orElse(null);
+                    if (foundParent == null) continue;
+
+                    foundParent.addChild(childName, new CommandNode(child, childCommand, instance));
+                }
+            }
+        }
+    }
+
+    private static void registerNode(CommandNode node) {
+        nodes.add(node);
+
+        BukkitCommand bukkitCommand = new BukkitCommand(node);
+        map.register(AbstractPlugin.getInstance().getDescription().getName().toLowerCase(), bukkitCommand);
+    }
+
+    public static void registerParameter(Class<?> clazz, ParameterType<?, CommandSender> parameterType) {
+        parameterTypes.put(clazz, parameterType);
+    }
+
+    public static void init() {
+        if (initialised) throw new RuntimeException("Already initialised.");
+        refreshMap();
+
+        registerParameter(String.class, new StringParameter());
+        registerParameter(Boolean.class, new BooleanParameter());
+        registerParameter(boolean.class, new BooleanParameter());
+
+        NO_PERMISSION_MESSAGE = "&cNo permission.";
+        CONSOLE_ONLY_MESSAGE = "&cConsole only.";
+        PLAYER_ONLY_MESSAGE = "&cPlayer only.";
+
+        initialised = true;
     }
 
 }
