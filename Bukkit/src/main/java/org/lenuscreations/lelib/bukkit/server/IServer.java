@@ -26,7 +26,7 @@ public interface IServer {
 
     ConsoleCommandSender getConsole();
 
-
+    void eval(String command);
 
     // todo: add more features to make it easier to manage things via NMS and bukkit
 

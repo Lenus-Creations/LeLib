@@ -11,13 +11,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.lenuscreations.lelib.bukkit.event.EventManager;
 import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
+import org.lenuscreations.lelib.bukkit.gui.GUIListener;
 import org.lenuscreations.lelib.bukkit.server.IServer;
-import org.lenuscreations.lelib.bukkit.utils.ClassUtils;
+import org.lenuscreations.lelib.bukkit.test_commands.TestCommands;
+import org.lenuscreations.lelib.bukkit.utils.Util;
 import org.lenuscreations.lelib.database.IDatabase;
 
 import java.lang.reflect.Method;
+import java.util.logging.Level;
 
-public abstract class AbstractPlugin extends JavaPlugin {
+public class AbstractPlugin extends JavaPlugin {
 
     @Getter
     private static AbstractPlugin instance;
@@ -87,29 +90,39 @@ public abstract class AbstractPlugin extends JavaPlugin {
 
             @Override
             public void setTabHeader(String header) {
-
+                throw new RuntimeException("Not yet implemented.");
             }
 
             @Override
             public void setTabFooter(String footer) {
-
+                throw new RuntimeException("Not yet implemented");
             }
 
             @Override
             public void log(String message) {
-
+                Bukkit.getServer().getLogger().log(Level.INFO, message);
+                // TODO: write to file.
             }
 
             @Override
             public void send(CommandSender sender, String message) {
-
+                sender.sendMessage(Util.format(message));
             }
 
             @Override
             public ConsoleCommandSender getConsole() {
-                return null;
+                return Bukkit.getServer().getConsoleSender();
+            }
+
+            @Override
+            public void eval(String command) {
+                Bukkit.getServer().dispatchCommand(getConsole(), command);
             }
         };
+
+        this.addListener(GUIListener.class);
+
+        getCommand("test").setExecutor(new TestCommands());
     }
 
     @Override
@@ -123,10 +136,6 @@ public abstract class AbstractPlugin extends JavaPlugin {
 
     public final void addListener(Class<?> clazz) {
         this.eventHandler.register(clazz);
-    }
-
-    public final void addListener(Method method) {
-        this.eventHandler.register(method);
     }
 
     @SneakyThrows

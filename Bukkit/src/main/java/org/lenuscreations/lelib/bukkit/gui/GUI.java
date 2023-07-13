@@ -18,4 +18,8 @@ public @interface GUI {
 
     InventoryType type() default InventoryType.CHEST;
 
+    boolean autoUpdate() default false;
+
+    long autoUpdateTime() default 20L;
+
 }

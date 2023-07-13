@@ -1,0 +1,9 @@
+name: TestPluginLib
+description: temp plugin.yml file
+main: org.lenuscreations.lelib.bukkit.AbstractPlugin
+author: grcq
+version: 0.1
+commands:
+  test:
+    aliases:
+      - t

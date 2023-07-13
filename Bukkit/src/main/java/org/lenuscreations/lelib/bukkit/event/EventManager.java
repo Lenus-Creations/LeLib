@@ -1,5 +1,6 @@
 package org.lenuscreations.lelib.bukkit.event;
 
+import lombok.SneakyThrows;
 import org.bukkit.event.Listener;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 
@@ -24,16 +25,16 @@ public class EventManager {
         this.register(method, clazz.getAnnotation(EventListener.class));
     }
 
-    public void register(Method method) {
+    private void register(Method method) {
         if (!method.isAnnotationPresent(EventListener.class)) return;
 
         this.register(method, method.getAnnotation(EventListener.class));
     }
 
     private void register(Method method, EventListener annotation) {
-        AbstractPlugin.getInstance().getServer().getPluginManager().registerEvent(annotation.event(), new Listener() {}, annotation.priority(), (e, l) -> {
+        AbstractPlugin.getInstance().getServer().getPluginManager().registerEvent(annotation.event(), new Listener() {}, annotation.priority(), (l, event) -> {
             try {
-                method.invoke(this, e);
+                method.invoke(null, event);
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 throw new RuntimeException(ex);
             }
