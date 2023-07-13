@@ -46,7 +46,6 @@ public class GUIListener {
             List<Integer> slotList = Arrays.stream(slots).boxed().collect(Collectors.toList());
 
             if (slots.length == 0) {
-                // listen for item
                 ItemStack clickedItem = e.getCurrentItem();
                 if (clickedItem.getItemMeta() == null) {
                     e.setCancelled(true);
