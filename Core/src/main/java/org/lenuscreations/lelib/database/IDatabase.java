@@ -8,7 +8,7 @@ public interface IDatabase<R, P> {
 
     void put(String var1, P var2, String var3);
 
-    void remove(String var1, String var2);
+    void remove(String var1, String var2, Object var3);
 
     void setCredentials(Credentials credentials);
 }

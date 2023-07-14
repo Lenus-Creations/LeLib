@@ -57,8 +57,8 @@ public class MySQL implements IDatabase<ResultSet, String> {
     }
 
     @Override
-    public void remove(String var1, String value) {
-        this.update("DELETE FROM " + var1 + " WHERE " + value);
+    public void remove(String var1, String var2, Object var3) {
+        this.update("DELETE FROM " + var1 + " WHERE " + var2 + "=" + var3);
     }
 
     @Override

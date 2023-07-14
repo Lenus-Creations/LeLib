@@ -51,8 +51,13 @@ public class MongoDB implements IDatabase<JsonObject, JsonObject> {
     }
 
     @Override
-    public void remove(String var1, String var2) {
+    public void remove(String var1, String var2, Object var3) {
+        MongoCollection<Document> collection = database.getCollection(var1);
 
+        Document document = collection.find(Filters.eq(var2, var3)).first();
+        if (document != null) {
+            collection.deleteOne(document);
+        }
     }
 
     @Override
