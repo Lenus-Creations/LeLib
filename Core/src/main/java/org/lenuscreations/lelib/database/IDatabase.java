@@ -4,7 +4,11 @@ public interface IDatabase<R, P> {
 
     String getDriverName();
 
-    R get(String query);
+    R get(String var1, String var2);
 
-    void put(P value);
+    void put(String var1, P var2, String var3);
+
+    void remove(String var1, String var2);
+
+    void setCredentials(Credentials credentials);
 }

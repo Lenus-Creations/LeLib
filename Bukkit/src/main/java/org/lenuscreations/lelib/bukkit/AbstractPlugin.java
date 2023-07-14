@@ -16,6 +16,7 @@ import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
 import org.lenuscreations.lelib.bukkit.server.IServer;
 import org.lenuscreations.lelib.bukkit.utils.Util;
+import org.lenuscreations.lelib.database.Credentials;
 import org.lenuscreations.lelib.database.IDatabase;
 
 import java.lang.reflect.Method;
@@ -141,8 +142,9 @@ public class AbstractPlugin extends JavaPlugin {
     }
 
     @SneakyThrows
-    public final void setDatabase(Class<? extends IDatabase<?, ?>> instance) {
+    public final void setDatabase(Class<? extends IDatabase<?, ?>> instance, Credentials credentials) {
         this.currentDatabase = instance.getDeclaredConstructor().newInstance();
+        this.currentDatabase.setCredentials(credentials);
         getLogger().info("The database has been set to " + this.currentDatabase + ".");
     }
 
