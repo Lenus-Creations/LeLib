@@ -13,8 +13,4 @@ public class StringParameter implements ParameterType<String, CommandSender> {
         return target;
     }
 
-    @Override
-    public List<String> completer(CommandSender executor, String source) {
-        return new ArrayList<>();
-    }
 }

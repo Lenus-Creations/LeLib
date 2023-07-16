@@ -5,14 +5,16 @@ import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.SimplePluginManager;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
-import org.lenuscreations.lelib.bukkit.command.parameters.BooleanParameter;
+import org.lenuscreations.lelib.bukkit.command.parameters.*;
 import org.lenuscreations.lelib.command.Command;
 import org.lenuscreations.lelib.command.ParameterType;
-import org.lenuscreations.lelib.bukkit.command.parameters.StringParameter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -98,6 +100,15 @@ public class CommandHandler {
         registerParameter(String.class, new StringParameter());
         registerParameter(Boolean.class, new BooleanParameter());
         registerParameter(boolean.class, new BooleanParameter());
+        registerParameter(Integer.class, new IntegerParameter());
+        registerParameter(int.class, new IntegerParameter());
+        registerParameter(Player.class, new PlayerParameter());
+        registerParameter(OfflinePlayer.class, new OfflinePlayerParameter());
+        registerParameter(World.class, new WorldParameter());
+        registerParameter(Float.class, new FloatParameter());
+        registerParameter(float.class, new FloatParameter());
+        registerParameter(Double.class, new DoubleParameter());
+        registerParameter(double.class, new DoubleParameter());
 
         NO_PERMISSION_MESSAGE = "&cNo permission.";
         CONSOLE_ONLY_MESSAGE = "&cConsole only.";

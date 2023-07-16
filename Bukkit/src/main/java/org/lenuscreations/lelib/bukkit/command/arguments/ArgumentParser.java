@@ -87,7 +87,7 @@ public class ArgumentParser {
 
         boolean hasFlag = Arrays.asList(args).contains(flagName);
 
-        Argument argument = new Argument(ArgumentType.FLAG, flag.value(), hasFlag, null);
+        Argument argument = new Argument(ArgumentType.FLAG, null, hasFlag, flag.value());
         int size = this.args.size();
         this.args.put(size, argument);
         return (hasFlag ? shift(args, flagName) : args);
