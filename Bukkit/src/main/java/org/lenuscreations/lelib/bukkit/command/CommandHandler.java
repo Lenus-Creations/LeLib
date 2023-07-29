@@ -3,6 +3,7 @@ package org.lenuscreations.lelib.bukkit.command;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -32,8 +33,11 @@ public class CommandHandler {
     private static Map<Class<?>, ParameterType<?, CommandSender>> parameterTypes = new HashMap<>();
     protected static List<CommandNode> nodes = new ArrayList<>();
 
+    @Setter
     public static String NO_PERMISSION_MESSAGE;
+    @Setter
     public static String CONSOLE_ONLY_MESSAGE;
+    @Setter
     public static String PLAYER_ONLY_MESSAGE;
 
 
@@ -94,7 +98,7 @@ public class CommandHandler {
     }
 
     public static void init() {
-        if (initialised) throw new RuntimeException("Already initialised.");
+        if (initialised) return;
         refreshMap();
 
         registerParameter(String.class, new StringParameter());

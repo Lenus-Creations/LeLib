@@ -61,4 +61,9 @@ public class TestCommands {
         sender.sendMessage("flag value added? " + value);
     }
 
+    @Command(name = "test player")
+    public void testPlayer(CommandSender sender, @Arg(name = "player") Player player) {
+        sender.sendMessage("player: " + player.getName());
+    }
+
 }

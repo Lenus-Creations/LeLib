@@ -133,30 +133,33 @@ public class CommandNode {
     public List<String> tabComplete(Player player, String[] args) {
         List<String> arguments = new ArrayList<>();
 
+        List<Class<?>> parameters = Lists.newArrayList(method.getParameterTypes());
+        parameters.remove(0);
+
+        int flagCount = 0;
         ParameterType<?, CommandSender> parameterType = null;
-        if (args.length <= method.getParameterCount()) {
-            parameterType = CommandHandler.getParameterTypes().get(method.getParameterTypes()[args.length - 1]);
+        if (args.length <= parameters.size()) {
+            for (int i = 0; i < args.length - 1; i++) {
+                if (method.getParameters()[i + 1].isAnnotationPresent(Flag.class)) flagCount++;
+            }
+
+            int i = flagCount + 1;
+            int x = args.length - i;
+            Class<?> parameter = method.getParameterTypes()[x];
+            parameterType = CommandHandler.getParameterTypes().get(parameter);
         }
 
         if (parameterType != null) {
             String arg = args[args.length - 1];
-            arguments.addAll(parameterType.completer(player, arg).stream().filter(a -> a.startsWith(arg)).collect(Collectors.toList()));
+            arguments.addAll(parameterType.completer(player, arg));
         }
 
         for (String childString : children.keySet()) {
             String[] split = childString.split(" ");
 
-            List<CommandNode> nodes = getChild(split, false);
-            for (CommandNode node : nodes) {
-                if (args.length >= split.length) continue;
+            if (args.length > split.length) continue;
 
-                String name = node.getName().split(" ")[args.length - 1];
-                if (arguments.contains(name)) continue;
-
-                if (StringUtils.startsWithIgnoreCase(name, args[args.length - 1])) {
-                    arguments.add(name);
-                }
-            }
+            arguments.add(split[args.length - 1]);
         }
 
         List<CommandNode> possibleChildren = getChild(args, true);
@@ -165,7 +168,14 @@ public class CommandNode {
             return child.tabComplete(player, args);
         }
 
-        return arguments;
+        List<String> newArgs = new ArrayList<>();
+        for (String argument : arguments) {
+            if (StringUtils.startsWithIgnoreCase(argument, args[args.length - (flagCount > 0 ? flagCount : 1)])) {
+                newArgs.add(argument);
+            }
+        }
+
+        return newArgs;
     }
 
     protected boolean canAccess(CommandSender sender) {
