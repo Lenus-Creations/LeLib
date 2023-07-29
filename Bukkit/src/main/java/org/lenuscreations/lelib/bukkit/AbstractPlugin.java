@@ -15,11 +15,14 @@ import org.lenuscreations.lelib.bukkit.event.EventManager;
 import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
 import org.lenuscreations.lelib.bukkit.server.IServer;
+import org.lenuscreations.lelib.bukkit.utils.ClassUtils;
 import org.lenuscreations.lelib.bukkit.utils.Util;
 import org.lenuscreations.lelib.database.Credentials;
 import org.lenuscreations.lelib.database.IDatabase;
+import org.lenuscreations.lelib.utils.ClassUtil;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 public class AbstractPlugin extends JavaPlugin {
@@ -137,8 +140,20 @@ public class AbstractPlugin extends JavaPlugin {
         CommandHandler.register(clazz);
     }
 
+    public final void registerCommand(Class<?>... clazz) {
+        Arrays.asList(clazz).forEach(this::registerCommand);
+    }
+
+    public final void registerCommands(JavaPlugin plugin) {
+        ClassUtil.getClassesInPackage(plugin.getClass(), plugin.getClass().getPackage().getName()).forEach(this::registerCommand);
+    }
+
     public final void addListener(Class<?> clazz) {
         this.eventHandler.register(clazz);
+    }
+
+    public final void addListener(Class<?>... clazz) {
+        Arrays.asList(clazz).forEach(this::addListener);
     }
 
     @SneakyThrows

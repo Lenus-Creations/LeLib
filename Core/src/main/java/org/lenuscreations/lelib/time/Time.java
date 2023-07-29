@@ -1,4 +1,4 @@
-package org.lenuscreations.lelib.bukkit.time;
+package org.lenuscreations.lelib.time;
 
 import lombok.Getter;
 

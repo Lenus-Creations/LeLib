@@ -22,6 +22,12 @@ public class FileHandler {
 
     private void parse() {
         // todo: read file and add to this::config
+        switch (getFileType()) {
+            case YAML:
+                break;
+            case JSON:
+                break;
+        }
     }
 
     public void set(Configuration configuration) {
@@ -53,5 +59,19 @@ public class FileHandler {
 
     public void save() {
         // todo: write file
+    }
+
+    public FileType getFileType() {
+        String[] a = file.getName().split("\\.");
+        String type = a[a.length - 1].toLowerCase();
+        switch (type) {
+            case "json":
+                return FileType.JSON;
+            case "yml":
+            case "yaml":
+                return FileType.YAML;
+            default:
+                throw new UnsupportedOperationException("Unsupported file type; not yet implemented.");
+        }
     }
 }

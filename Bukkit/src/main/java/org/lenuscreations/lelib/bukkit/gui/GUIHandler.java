@@ -73,26 +73,8 @@ public class GUIHandler {
         openedGUIs.put(player, clazz);
 
         if (gui.autoUpdate()) {
-            runnable.runTaskTimer(AbstractPlugin.getInstance(), 20L, gui.autoUpdateTime());
+            runnable.runTaskTimerAsynchronously(AbstractPlugin.getInstance(), gui.autoUpdateTime(), gui.autoUpdateTime());
         }
-    }
-
-    public void registerGUI(Class<?> clazz) {
-        if (!clazz.isAnnotationPresent(GUI.class)) return;
-        if (clazz.getDeclaredMethods().length == 0) return;
-
-        Method method = clazz.getDeclaredMethods()[0];
-        if (method.getReturnType() != Map.class) return;
-        Type[] types = ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments();
-
-        if (types.length != 2) return;
-
-        Class<?> type1 = (Class<?>) types[0];
-        Class<?> type2 = (Class<?>) types[1];
-
-        if (type1.getDeclaringClass() != Integer.class || type2.getDeclaringClass() != ItemStack[].class) return;
-
-        handlers.put(clazz, clazz.getDeclaredMethods()[0]);
     }
 
 }
