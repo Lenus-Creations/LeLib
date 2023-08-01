@@ -12,8 +12,6 @@ public class Configuration {
 
     private final String name;
 
-    private final List<Configuration> children;
-
     private ConfigValue<?> value;
 
 }

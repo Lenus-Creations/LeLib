@@ -14,6 +14,7 @@ import org.lenuscreations.lelib.bukkit.command.test.TestCommands;
 import org.lenuscreations.lelib.bukkit.event.EventManager;
 import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
+import org.lenuscreations.lelib.bukkit.hologram.HologramHandler;
 import org.lenuscreations.lelib.bukkit.server.IServer;
 import org.lenuscreations.lelib.bukkit.utils.ClassUtils;
 import org.lenuscreations.lelib.bukkit.utils.Util;
