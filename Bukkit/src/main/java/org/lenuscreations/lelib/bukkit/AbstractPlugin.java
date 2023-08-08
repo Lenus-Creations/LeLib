@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.lenuscreations.lelib.bukkit.command.CommandHandler;
 import org.lenuscreations.lelib.bukkit.command.test.TestCommands;
+import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
 import org.lenuscreations.lelib.bukkit.event.EventManager;
 import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
@@ -39,6 +40,8 @@ public class AbstractPlugin extends JavaPlugin {
     private EventManager eventHandler;
     @Getter
     private GUIHandler guiHandler;
+    @Getter
+    private DisguiseHandler disguiseHandler;
 
     public IServer server;
 
@@ -50,6 +53,7 @@ public class AbstractPlugin extends JavaPlugin {
 
         this.eventHandler = new EventManager();
         this.guiHandler = new GUIHandler();
+        this.disguiseHandler = new DisguiseHandler();
         this.server = new IServer() {
 
             @Override
