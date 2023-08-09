@@ -1,13 +1,12 @@
 package org.lenuscreations.lelib.jda.command.arguments;
 
-import org.bukkit.command.CommandSender;
-import org.lenuscreations.lelib.bukkit.command.CommandHandler;
+import net.dv8tion.jda.api.entities.Member;
 import org.lenuscreations.lelib.command.Arg;
 import org.lenuscreations.lelib.command.Flag;
 import org.lenuscreations.lelib.command.FlagValue;
 import org.lenuscreations.lelib.command.ParameterType;
+import org.lenuscreations.lelib.jda.command.JDACommandHandler;
 
-import java.lang.reflect.Member;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,7 +67,7 @@ public class ArgumentParser {
         else if (args.length > 0) value = args[0];
         else return new String[0];
 
-        ParameterType<?, Member> parameterType = CommandHandler.getParameterTypes().get(parameter.getType());
+        ParameterType<?, Member> parameterType = JDACommandHandler.getParameterTypes().get(parameter.getType());
         if (parameterType == null) throw new RuntimeException();
 
         Object valueObject = parameterType.parse(executor, value);
@@ -110,7 +109,7 @@ public class ArgumentParser {
             args = shift(args);
             if (args.length == 0) return new String[0];
 
-            ParameterType<?, CommandSender> parameterType = CommandHandler.getParameterTypes().get(parameter.getType());
+            ParameterType<?, Member> parameterType = JDACommandHandler.getParameterTypes().get(parameter.getType());
             if (parameterType == null) throw new RuntimeException();
 
             Object valueObject = parameterType.parse(executor, args[0]);

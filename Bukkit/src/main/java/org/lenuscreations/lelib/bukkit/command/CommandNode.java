@@ -224,8 +224,9 @@ public class CommandNode {
             if (parameter.isAnnotationPresent(Arg.class)) {
                 Arg arg = parameter.getAnnotation(Arg.class);
                 str.append((arg.defaultValue().isEmpty() ? "<" : "["))
-                        .append(arg.name())
-                        .append((arg.defaultValue().isEmpty() ? "> " : "] "));
+                        .append(arg.name());
+                if (arg.wildcard()) str.append("...");
+                str.append((arg.defaultValue().isEmpty() ? "> " : "] "));
             } else if (parameter.isAnnotationPresent(Flag.class)) {
                 Flag flag = parameter.getAnnotation(Flag.class);
                 str.append("[-")

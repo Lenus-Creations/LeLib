@@ -105,19 +105,28 @@ public class ArgumentParser {
             return args;
         }
 
-        if (args[0].equalsIgnoreCase(flagName)) {
-            args = shift(args);
+        int index = -1;
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equals(flagName)) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index != -1) {
+            args = shift(args, flagName);
             if (args.length == 0) return new String[0];
 
             ParameterType<?, CommandSender> parameterType = CommandHandler.getParameterTypes().get(parameter.getType());
             if (parameterType == null) throw new RuntimeException();
 
-            Object valueObject = parameterType.parse(executor, args[0]);
+            Object valueObject = parameterType.parse(executor, args[index]);
             Argument argument = new Argument(ArgumentType.FLAG_VALUE, flagValue.valueName(), valueObject, flagValue.flagName());
 
             int size = this.args.size();
             this.args.put(size, argument);
-            return shift(args);
+            return shift(args, args[index]);
         }
 
         Argument argument = new Argument(ArgumentType.FLAG_VALUE, flagValue.valueName(), null, flagValue.flagName());

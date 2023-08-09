@@ -17,6 +17,7 @@ import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
 import org.lenuscreations.lelib.bukkit.hologram.HologramHandler;
 import org.lenuscreations.lelib.bukkit.server.IServer;
+import org.lenuscreations.lelib.bukkit.tag.TagHandler;
 import org.lenuscreations.lelib.bukkit.utils.ClassUtils;
 import org.lenuscreations.lelib.bukkit.utils.Util;
 import org.lenuscreations.lelib.database.Credentials;
@@ -42,6 +43,8 @@ public class AbstractPlugin extends JavaPlugin {
     private GUIHandler guiHandler;
     @Getter
     private DisguiseHandler disguiseHandler;
+    @Getter
+    private TagHandler tagHandler;
 
     public IServer server;
 
@@ -54,6 +57,7 @@ public class AbstractPlugin extends JavaPlugin {
         this.eventHandler = new EventManager();
         this.guiHandler = new GUIHandler();
         this.disguiseHandler = new DisguiseHandler();
+        this.tagHandler = new TagHandler();
         this.server = new IServer() {
 
             @Override
@@ -133,7 +137,7 @@ public class AbstractPlugin extends JavaPlugin {
         this.addListener(GUIListener.class);
 
         CommandHandler.init();
-        registerCommand(TestCommands.class);
+        //registerCommand(TestCommands.class);
     }
 
     @Override
@@ -149,8 +153,8 @@ public class AbstractPlugin extends JavaPlugin {
         Arrays.asList(clazz).forEach(this::registerCommand);
     }
 
-    public final void registerCommands(JavaPlugin plugin) {
-        ClassUtil.getClassesInPackage(plugin.getClass(), plugin.getClass().getPackage().getName()).forEach(this::registerCommand);
+    public final void registerCommands(Class<?> clazz) {
+        ClassUtil.getClassesInPackage(clazz, clazz.getPackage().getName()).forEach(this::registerCommand);
     }
 
     public final void addListener(Class<?> clazz) {

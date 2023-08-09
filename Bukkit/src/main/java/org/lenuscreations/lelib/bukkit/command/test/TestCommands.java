@@ -1,14 +1,20 @@
 package org.lenuscreations.lelib.bukkit.command.test;
 
+import com.google.gson.JsonObject;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
-import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
+import org.lenuscreations.lelib.bukkit.disguise.Disguise;
+import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
 import org.lenuscreations.lelib.bukkit.gui.example.ExampleGUI;
+import org.lenuscreations.lelib.bukkit.tag.TagHandler;
+import org.lenuscreations.lelib.bukkit.utils.PlayerUtils;
 import org.lenuscreations.lelib.command.Arg;
 import org.lenuscreations.lelib.command.Command;
 import org.lenuscreations.lelib.command.Flag;
 import org.lenuscreations.lelib.command.FlagValue;
+
+import java.util.UUID;
 
 public class TestCommands {
 
@@ -64,6 +70,25 @@ public class TestCommands {
     @Command(name = "test player")
     public void testPlayer(CommandSender sender, @Arg(name = "player") Player player) {
         sender.sendMessage("player: " + player.getName());
+    }
+
+    @Command(name = "tag")
+    public void tagTest(Player player, @Arg(name = "colour") String colour, @FlagValue(valueName = "prefix", flagName = "p") String prefix, @FlagValue(valueName = "suffix", flagName = "s") String suffix) {
+        TagHandler tagHandler = AbstractPlugin.getInstance().getTagHandler();
+        tagHandler.setTag(player, prefix + " ", " " + suffix, colour);
+    }
+
+    @Command(name = "tag clear")
+    public void tagClear(Player player) {
+        TagHandler tagHandler = AbstractPlugin.getInstance().getTagHandler();
+        tagHandler.clear(player);
+    }
+
+    @Command(name = "disguise")
+    public void disguise(Player player, @Arg(name = "name") String name) {
+        DisguiseHandler disguiseHandler = AbstractPlugin.getInstance().getDisguiseHandler();
+
+        disguiseHandler.disguise(new Disguise(PlayerUtils.getUUID(name), name, player.getUniqueId(), player.getName()));
     }
 
 }

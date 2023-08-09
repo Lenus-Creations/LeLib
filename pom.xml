@@ -14,6 +14,7 @@
         <module>JDA</module>
         <module>build</module>
         <module>v1_8_R3</module>
+        <module>v1_12_R1</module>
     </modules>
 
     <properties>

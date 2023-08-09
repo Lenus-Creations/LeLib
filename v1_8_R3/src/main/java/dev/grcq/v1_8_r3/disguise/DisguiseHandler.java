@@ -19,14 +19,14 @@ public class DisguiseHandler {
         JsonObject properties = object.get("properties").getAsJsonArray().get(0).getAsJsonObject();
 
         String texture = properties.get("value").getAsString();
-        String signature = object.get("signature").getAsString();
+        String signature = properties.get("signature").getAsString();
 
         EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         GameProfile profile = entityPlayer.getProfile();
 
         Field nameField = profile.getClass().getDeclaredField("name");
         nameField.setAccessible(true);
-        nameField.set(profile, object.get("username").getAsString());
+        nameField.set(profile, object.get("name").getAsString());
 
         profile.getProperties().clear();
         profile.getProperties().put(

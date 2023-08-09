@@ -12,13 +12,8 @@ import org.lenuscreations.lelib.bukkit.disguise.Disguise;
 @RequiredArgsConstructor
 public class DisguiseChangeEvent extends Event {
 
-    private final HandlerList handlerList = new HandlerList();
+    private final HandlerList handlers = new HandlerList();
 
     private final Disguise disguise;
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlerList;
-    }
 
 }

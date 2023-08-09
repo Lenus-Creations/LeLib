@@ -1,18 +1,16 @@
 package org.lenuscreations.lelib.bukkit.disguise;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import dev.grcq.v1_12_r1.V1_12_R1;
 import dev.grcq.v1_8_r3.V1_8_R3;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.lenuscreations.lelib.bukkit.disguise.event.DisguiseChangeEvent;
 import org.lenuscreations.lelib.bukkit.disguise.event.DisguiseClearEvent;
+import org.lenuscreations.lelib.bukkit.utils.PlayerUtils;
 import org.lenuscreations.lelib.bukkit.utils.Util;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class DisguiseHandler {
@@ -20,22 +18,32 @@ public class DisguiseHandler {
     private final List<Disguise> disguises = new ArrayList<>();
 
     @SneakyThrows
-    public void disguise(Disguise disguise) {
+    public boolean disguise(Disguise disguise) {
         if (disguise == null) throw new RuntimeException("Disguise data cannot be null.");
         if (isDisguised(disguise.getActualUUID())) disguise.setActualName(disguise.getActualName());
 
-        JsonObject object = get(disguise.getUuid());
+        JsonObject object = PlayerUtils.getProfileSigned(disguise.getUuid());
+        if (object == null) return false;
+
+        Player player = Bukkit.getPlayer(disguise.getActualUUID());
 
         switch (Util.getNMSVersion()) {
-            case "1_8_R3":
+            case "v1_8_R3":
                 V1_8_R3.getDisguiseHandler().disguise(Bukkit.getPlayer(disguise.getActualUUID()), object);
+                break;
+            case "v1_12_R1":
+                V1_12_R1.getDisguiseHandler().disguise(Bukkit.getPlayer(disguise.getActualUUID()), object);
                 break;
             default:
                 throw new UnsupportedOperationException("Not yet implemented for this server version.");
         }
 
         this.disguises.add(disguise);
+        player.setDisplayName(disguise.getUsername());
+        player.setCustomName(disguise.getUsername());
+        player.setCustomNameVisible(true);
         Bukkit.getServer().getPluginManager().callEvent(new DisguiseChangeEvent(disguise));
+        return true;
     }
 
     @SneakyThrows
@@ -53,38 +61,25 @@ public class DisguiseHandler {
         Bukkit.getServer().getPluginManager().callEvent(new DisguiseClearEvent(disguise));
 
         this.disguises.remove(clearDisguise);
+        player.setDisplayName(disguise.getActualName());
+        player.setCustomName(disguise.getActualName());
+        player.setCustomNameVisible(false);
     }
 
     public boolean isDisguised(UUID actualUUID) {
-        return this.disguises.stream().anyMatch(d -> d.getActualUUID().equals(actualUUID));
+        return getDisguise(actualUUID) != null;
     }
 
     public boolean isDisguised(Player player) {
         return this.isDisguised(player.getUniqueId());
     }
 
-    private JsonObject get(UUID uuid) throws IOException {
-        String uuidString = uuid.toString().replace("-", "");
-        InputStream is = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuidString + "?unsigned=false").openStream();
-
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-            String jsonText = readAll(rd);
-
-            return (JsonObject) new JsonParser().parse(jsonText);
-        } finally {
-            is.close();
-        }
-
+    public Disguise getDisguise(UUID actualUUID) {
+        return this.disguises.stream().filter(d -> d.getActualUUID().equals(actualUUID)).findFirst().orElse(null);
     }
 
-    private static String readAll(Reader rd) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = rd.read()) != -1) {
-            sb.append((char) cp);
-        }
-        return sb.toString();
+    public Disguise getDisguise(Player player) {
+        return this.getDisguise(player.getUniqueId());
     }
 
 }
