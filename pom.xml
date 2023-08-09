@@ -13,6 +13,7 @@
         <module>Core</module>
         <module>JDA</module>
         <module>build</module>
+        <module>v1_8_R3</module>
     </modules>
 
     <properties>

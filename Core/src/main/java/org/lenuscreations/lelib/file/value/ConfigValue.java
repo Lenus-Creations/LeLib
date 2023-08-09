@@ -4,6 +4,6 @@ public interface ConfigValue<T> {
 
     T getValue();
 
-    T parse(Object obj);
+    ConfigValue<T> parse(Object obj);
 
 }

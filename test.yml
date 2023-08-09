@@ -1,0 +1,6 @@
+- !!org.lenuscreations.lelib.file.Configuration
+  value: !!org.lenuscreations.lelib.file.value.impl.ConfigurationChildren {}
+- !!org.lenuscreations.lelib.file.Configuration
+  value: !!org.lenuscreations.lelib.file.value.impl.StringValue {value: abcdefg}
+- !!org.lenuscreations.lelib.file.Configuration
+  value: !!org.lenuscreations.lelib.file.value.impl.StringValue {value: hi}

@@ -83,12 +83,12 @@ public class CommandNode implements Node<Member, Message, String[]> {
         Map<Integer, Argument> arguments = parser.parse(args, parameters.toArray(new Parameter[0]));
 
         if (arguments.size() < method.getParameterCount() - 1 || arguments.size() > method.getParameterCount() - 1) {
-            this.sendUsageMessage(member, method.getParameters());
+            //this.sendUsageMessage(member, method.getParameters());
             return;
         }
 
         if (arguments.values().stream().anyMatch(a -> a.getValue() == null && a.getType() != ArgumentType.FLAG_VALUE)) {
-            this.sendUsageMessage(member, method.getParameters());
+            //this.sendUsageMessage(member, method.getParameters());
             return;
         }
 
