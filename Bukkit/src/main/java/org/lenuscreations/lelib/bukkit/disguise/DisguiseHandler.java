@@ -67,7 +67,7 @@ public class DisguiseHandler {
     }
 
     public boolean isDisguised(UUID actualUUID) {
-        return getDisguise(actualUUID) != null;
+        return this.disguises.stream().anyMatch(d -> d.getActualUUID().equals(actualUUID));
     }
 
     public boolean isDisguised(Player player) {

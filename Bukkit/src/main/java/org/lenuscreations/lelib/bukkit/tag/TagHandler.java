@@ -8,6 +8,7 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
+import org.lenuscreations.lelib.bukkit.disguise.Disguise;
 import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
 import org.lenuscreations.lelib.bukkit.tag.event.TagChangeEvent;
 import org.lenuscreations.lelib.bukkit.tag.event.TagClearEvent;
@@ -37,7 +38,6 @@ public class TagHandler {
 
 
         Player player = tagData.getPlayer();
-        tagDataMap.put(player.getUniqueId(), tagData);
 
         String prefix = tagData.getPrefix();
         String suffix = tagData.getSuffix();
@@ -49,7 +49,22 @@ public class TagHandler {
 
         DisguiseHandler disguiseHandler = AbstractPlugin.getInstance().getDisguiseHandler();
         String name = player.getName();
-        if (disguiseHandler.isDisguised(player)) name = disguiseHandler.getDisguise(player).getActualName();
+        TagData previous = tagDataMap.get(player.getUniqueId());
+        if (disguiseHandler.isDisguised(player.getUniqueId())) {
+            name = disguiseHandler.getDisguise(player).getActualName();
+        }
+
+        if (previous != null) {
+            if (prefix == null) prefix = previous.getPrefix();
+            if (suffix == null) suffix = previous.getSuffix();
+            if (colour == null) colour = previous.getColour();
+        }
+
+        this.clear(player);
+
+        if (prefix != null && prefix.equals("null")) prefix = null;
+        if (suffix != null && suffix.equals("null")) suffix = null;
+        if (colour != null && colour.equals("null")) colour = null;
 
         Team team = scoreboard.getTeam(name);
         if (team == null) team = scoreboard.registerNewTeam(name);
@@ -65,7 +80,9 @@ public class TagHandler {
 
         team.addEntry(name);
 
-        Bukkit.getServer().getPluginManager().callEvent(new TagChangeEvent(tagData));
+        tagDataMap.put(player.getUniqueId(), tagData);
+
+        Bukkit.getServer().getPluginManager().callEvent(new TagChangeEvent(tagData, previous));
     }
 
     public void setTag(@NotNull Player player, @Nullable String prefix, @Nullable String suffix, @Nullable String colour) {
@@ -109,7 +126,7 @@ public class TagHandler {
 
         DisguiseHandler disguiseHandler = AbstractPlugin.getInstance().getDisguiseHandler();
         String name = player.getName();
-        if (disguiseHandler.isDisguised(player)) name = disguiseHandler.getDisguise(player).getActualName();
+        if (disguiseHandler.isDisguised(player.getUniqueId())) name = disguiseHandler.getDisguise(player).getActualName();
 
         Team team = scoreboard.getTeam(name);
         team.removeEntry(name);

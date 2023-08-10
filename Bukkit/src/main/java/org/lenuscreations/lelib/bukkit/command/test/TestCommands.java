@@ -75,7 +75,7 @@ public class TestCommands {
     @Command(name = "tag")
     public void tagTest(Player player, @Arg(name = "colour") String colour, @FlagValue(valueName = "prefix", flagName = "p") String prefix, @FlagValue(valueName = "suffix", flagName = "s") String suffix) {
         TagHandler tagHandler = AbstractPlugin.getInstance().getTagHandler();
-        tagHandler.setTag(player, prefix + " ", " " + suffix, colour);
+        tagHandler.setTag(player, (prefix == null ? null : prefix + " "), (suffix == null ? null : " " + suffix), colour);
     }
 
     @Command(name = "tag clear")
