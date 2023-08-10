@@ -137,7 +137,7 @@ public class AbstractPlugin extends JavaPlugin {
         this.addListener(GUIListener.class);
 
         CommandHandler.init();
-        registerCommand(TestCommands.class);
+        //registerCommand(TestCommands.class);
     }
 
     @Override
