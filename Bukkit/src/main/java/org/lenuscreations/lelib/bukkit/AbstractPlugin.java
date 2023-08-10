@@ -1,5 +1,8 @@
 package org.lenuscreations.lelib.bukkit;
 
+import dev.grcq.v1_12_r1.V1_12_R1;
+import dev.grcq.v1_16_r3.V1_16_R3;
+import dev.grcq.v1_8_r3.V1_8_R3;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -104,12 +107,36 @@ public class AbstractPlugin extends JavaPlugin {
 
             @Override
             public void setTabHeader(String header) {
-                throw new RuntimeException("Not yet implemented.");
+                switch (Util.getNMSVersion()) {
+                    case "v1_8_R3":
+                        V1_8_R3.getTabHandler().setHeader(header);
+                        break;
+                    case "v1_12_R1":
+                        V1_12_R1.getTabHandler().setHeader(header);
+                        break;
+                    default:
+                        if (Util.getServerVersion() > 1222) {
+                            V1_16_R3.getTabHandler().setHeader(header);
+                        } else throw new UnsupportedOperationException("Not yet implemented");
+                        break;
+                }
             }
 
             @Override
             public void setTabFooter(String footer) {
-                throw new RuntimeException("Not yet implemented");
+                switch (Util.getNMSVersion()) {
+                    case "v1_8_R3":
+                        V1_8_R3.getTabHandler().setFooter(footer);
+                        break;
+                    case "v1_12_R1":
+                        V1_12_R1.getTabHandler().setFooter(footer);
+                        break;
+                    default:
+                        if (Util.getServerVersion() > 1222) {
+                            V1_16_R3.getTabHandler().setFooter(footer);
+                        } else throw new UnsupportedOperationException("Not yet implemented");
+                        break;
+                }
             }
 
             @Override
@@ -138,6 +165,24 @@ public class AbstractPlugin extends JavaPlugin {
 
         CommandHandler.init();
         //registerCommand(TestCommands.class);
+
+        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                switch (Util.getNMSVersion()) {
+                    case "v1_8_R3":
+                        V1_8_R3.getTabHandler().send(p);
+                        break;
+                    case "v1_12_R1":
+                        V1_12_R1.getTabHandler().send(p);
+                        break;
+                    default:
+                        if (Util.getServerVersion() > 1222) {
+                            V1_16_R3.getTabHandler().send(p);
+                        } else throw new UnsupportedOperationException("Not yet implemented");
+                        break;
+                }
+            }
+        }, 10L, 10L);
     }
 
     @Override

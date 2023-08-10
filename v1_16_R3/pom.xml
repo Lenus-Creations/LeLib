@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.lenuscreations</groupId>
-    <artifactId>Bukkit</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>dev.grcq</groupId>
+    <artifactId>v1_16_R3</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>Bukkit</name>
+    <name>v1_16_R3</name>
 
     <properties>
         <java.version>1.8</java.version>
@@ -67,36 +67,13 @@
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.lenuscreations</groupId>
-            <artifactId>Core</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>dev.grcq</groupId>
-            <artifactId>v1_8_R3</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>dev.grcq</groupId>
-            <artifactId>v1_12_R1</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>dev.grcq</groupId>
-            <artifactId>v1_16_R3</artifactId>
-            <version>1.0</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.28</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -1,6 +1,7 @@
 package dev.grcq.v1_8_r3;
 
 import dev.grcq.v1_8_r3.disguise.DisguiseHandler;
+import dev.grcq.v1_8_r3.tab.TabHandler;
 import dev.grcq.v1_8_r3.tag.TagHandler;
 import lombok.Data;
 import lombok.Getter;
@@ -12,10 +13,13 @@ public final class V1_8_R3 {
     private static final DisguiseHandler disguiseHandler;
     @Getter
     private static final TagHandler tagHandler;
+    @Getter
+    private static final TabHandler tabHandler;
 
     static {
         disguiseHandler = new DisguiseHandler();
         tagHandler = new TagHandler();
+        tabHandler = new TabHandler();
     }
 
 }

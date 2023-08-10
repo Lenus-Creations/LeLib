@@ -1,0 +1,4 @@
+name: v1_16_R3
+version: '${project.version}'
+main: dev.grcq.v1_16_r3.V1_16_R3
+api-version: '1.16'
