@@ -19,6 +19,7 @@ import org.lenuscreations.lelib.bukkit.event.EventManager;
 import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
 import org.lenuscreations.lelib.bukkit.hologram.HologramHandler;
+import org.lenuscreations.lelib.bukkit.nick.NicknameHandler;
 import org.lenuscreations.lelib.bukkit.server.IServer;
 import org.lenuscreations.lelib.bukkit.tag.TagHandler;
 import org.lenuscreations.lelib.bukkit.utils.ClassUtils;
@@ -48,6 +49,8 @@ public class AbstractPlugin extends JavaPlugin {
     private DisguiseHandler disguiseHandler;
     @Getter
     private TagHandler tagHandler;
+    @Getter
+    private NicknameHandler nicknameHandler;
 
     public IServer server;
 
@@ -61,6 +64,7 @@ public class AbstractPlugin extends JavaPlugin {
         this.guiHandler = new GUIHandler();
         this.disguiseHandler = new DisguiseHandler();
         this.tagHandler = new TagHandler();
+        this.nicknameHandler = new NicknameHandler();
         this.server = new IServer() {
 
             @Override
