@@ -67,6 +67,27 @@ public class ArgumentParser {
         else if (args.length > 0) value = args[0];
         else return new String[0];
 
+        if (value.startsWith("\"")) {
+            value = value.substring(1);
+            args = shift(args);
+
+            if (value.endsWith("\"")) value = value.substring(0, value.length() - 1);
+            else {
+                for (String argument : args) {
+                    value += " " + argument;
+                    args = shift(args);
+                    if (argument.endsWith("\"")) {
+                        Argument a = new Argument(ArgumentType.ARGUMENT, arg.name(), value, null);
+
+                        int size = this.args.size();
+                        this.args.put(size, a);
+
+                        return args;
+                    }
+                }
+            }
+        }
+
         ParameterType<?, CommandSender> parameterType = CommandHandler.getParameterTypes().get(parameter.getType());
         if (parameterType == null) throw new RuntimeException();
 
@@ -117,6 +138,28 @@ public class ArgumentParser {
         if (index != -1) {
             args = shift(args, flagName);
             if (args.length == 0) return new String[0];
+
+            String value = args[index];
+            if (value.startsWith("\"")) {
+                if (!value.endsWith("\"")) {
+                    value = value.substring(1);
+                    args = shift(args, args[index]);
+
+                    for (int i = index; i < args.length; i++) {
+                        String argument = args[i];
+                        value += " " + argument;
+                        args = shift(args, args[index]);
+                        if (argument.endsWith("\"")) {
+                            Argument a = new Argument(ArgumentType.ARGUMENT, flagValue.valueName(), value.substring(0, value.length() - 2), flagValue.flagName());
+
+                            int size = this.args.size();
+                            this.args.put(size, a);
+
+                            return args;
+                        }
+                    }
+                }
+            }
 
             ParameterType<?, CommandSender> parameterType = CommandHandler.getParameterTypes().get(parameter.getType());
             if (parameterType == null) throw new RuntimeException();

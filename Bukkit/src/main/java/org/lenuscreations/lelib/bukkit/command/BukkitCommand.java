@@ -20,6 +20,7 @@ public class BukkitCommand extends Command {
         this.node = node;
 
         if (!node.getPermission().isEmpty()) {
+            if (node.getPermission().equalsIgnoreCase("op")) return;
             setPermission(node.getPermission());
             setPermissionMessage(Util.format(CommandHandler.NO_PERMISSION_MESSAGE));
         }

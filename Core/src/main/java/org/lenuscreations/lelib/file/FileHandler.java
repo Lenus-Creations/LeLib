@@ -1,19 +1,23 @@
 package org.lenuscreations.lelib.file;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.reflect.TypeToken;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import lombok.Getter;
-import org.bson.json.JsonReader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lenuscreations.lelib.LeLib;
 import org.lenuscreations.lelib.file.value.ConfigValue;
-import org.lenuscreations.lelib.file.value.impl.ConfigurationChildren;
-import org.lenuscreations.lelib.file.value.impl.ConfigurationValue;
-import org.lenuscreations.lelib.file.value.impl.StringValue;
+import org.lenuscreations.lelib.file.value.impl.*;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URL;
 import java.util.*;
 
 public class FileHandler {
@@ -24,25 +28,25 @@ public class FileHandler {
     @Getter
     private static final Map<Class<?>, ConfigValue<?>> registeredValues = new HashMap<>();
 
-    public FileHandler(File file) {
-        this(file.getPath());
+    public FileHandler(File file, Class<?> main) {
+        this(file.getPath(), main);
     }
 
-    public FileHandler(String path) {
+    public FileHandler(String path, Class<?> main) {
         this.path = path;
         this.config = new ArrayList<>();
 
-        this.parse();
+        this.parse(main);
     }
 
-    private void parse() {
-        Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+    private void parse(Class<?> main) {
+        Type mapType = new TypeToken<HashMap<String, Object>>() {}.getType();
 
         Map<String, Object> obj;
         switch (getFileType()) {
             case YAML:
                 Yaml yaml = new Yaml();
-                try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
+                try (InputStream is = main.getClassLoader().getResourceAsStream(path)) {
                     obj = yaml.load(is);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -50,8 +54,13 @@ public class FileHandler {
                 break;
             case JSON:
                 try {
-                    obj = LeLib.GSON.fromJson(new FileReader(path), mapType);
-                } catch (FileNotFoundException e) {
+                    URL url = main.getClassLoader().getResource(path);
+                    obj = LeLib.GSON.fromJson(new FileReader(url.getPath()), mapType);
+                    String json = LeLib.GSON.toJson(obj);
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    obj = mapper.readValue(json, Map.class);
+                } catch (FileNotFoundException | JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -69,6 +78,8 @@ public class FileHandler {
     }
 
     public static ConfigValue<?> parseValue(String key, Object value) {
+        if (value == null) return null;
+
         if (value.getClass().getSuperclass() == HashMap.class) {
             Map<String, Object> parsed = (HashMap<String, Object>) value;
 
@@ -116,21 +127,26 @@ public class FileHandler {
         return parent.orElse(null);
     }
 
-    public void save() {
+    public void save(Class<?> main) {
         // TODO: Fix save method (implement Configuration.class adapters for SnakeYaml and Gson)
+        JsonObject obj = unparse();
+        Map<String, Object> map = LeLib.GSON.fromJson(obj, new TypeToken<Map<String, Object>>() {}.getType());
+        URL url = main.getClassLoader().getResource(path);
+
         switch (getFileType()) {
             case JSON:
-                try (FileWriter writer = new FileWriter(path)) {
-                    LeLib.GSON_PPG.toJson(config, writer);
+                try (FileWriter writer = new FileWriter(url.getFile())) {
+                    LeLib.GSON_PPG.toJson(map, writer);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             case YAML:
                 Yaml yaml = new Yaml();
-                System.out.println(config);
-                try (FileWriter writer = new FileWriter(path)) {
-                    yaml.dump(config, writer);
+                try (FileWriter writer = new FileWriter(url.getFile())) {
+                    yaml.dump(map, writer);
+                    System.out.println(map);
+                    System.out.println(url.getFile());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -155,12 +171,48 @@ public class FileHandler {
         }
     }
 
+    private JsonObject unparse() {
+        JsonObject object = new JsonObject();
+        for (Configuration configuration : config) {
+            object.add(configuration.getName(), unparse(configuration));
+        }
+
+        return object;
+    }
+
+    private JsonElement unparse(Configuration configuration) {
+        JsonElement element = null;
+
+        if (configuration.getValue() == null) return null;
+
+        if (configuration.getValue().getClass() == ConfigurationChildren.class) {
+            element = new JsonObject();
+            for (Configuration child : ((ConfigurationChildren) configuration.getValue()).getValue()) {
+                ((JsonObject) element).add(child.getName(), unparse(child));
+            }
+        } else if (configuration.getValue().getClass() == StringValue.class) {
+            element = new JsonPrimitive(((StringValue) configuration.getValue()).getValue());
+        } else if (configuration.getValue().getClass() == DoubleValue.class) {
+            element = new JsonPrimitive(((DoubleValue) configuration.getValue()).getValue());
+        } else if (configuration.getValue().getClass() == FloatValue.class) {
+            element = new JsonPrimitive(((FloatValue) configuration.getValue()).getValue());
+        } else if (configuration.getValue().getClass() == BoolValue.class) {
+            element = new JsonPrimitive(((BoolValue) configuration.getValue()).getValue());
+        }
+
+        return element;
+    }
+
     public static void registerValue(Class<?> clazz, ConfigValue<?> configValue) {
         registeredValues.put(clazz, configValue);
     }
 
     static {
+        registerValue(Boolean.class, new BoolValue());
         registerValue(String.class, new StringValue());
         registerValue(Configuration.class, new ConfigurationValue());
+        registerValue(Double.class, new DoubleValue());
+        registerValue(Float.class, new FloatValue());
+        registerValue(Integer.class, new IntValue());
     }
 }

@@ -1,3 +1,5 @@
-test:
-  abc: "hi"
-testing: "abcdefg"
+user:
+  name: "adabc"
+password: "acbaddas"
+test: true
+hi: 73

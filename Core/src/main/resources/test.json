@@ -1,0 +1,8 @@
+{
+  "user": {
+    "name": "abc"
+  },
+  "password": "123",
+  "test": false,
+  "yes": 34
+}

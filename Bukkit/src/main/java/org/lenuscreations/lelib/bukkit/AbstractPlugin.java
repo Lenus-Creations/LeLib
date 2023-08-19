@@ -168,7 +168,7 @@ public class AbstractPlugin extends JavaPlugin {
         this.addListener(GUIListener.class);
 
         CommandHandler.init();
-        //registerCommand(TestCommands.class);
+        registerCommand(TestCommands.class);
 
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -202,8 +202,8 @@ public class AbstractPlugin extends JavaPlugin {
         Arrays.asList(clazz).forEach(this::registerCommand);
     }
 
-    public final void registerCommands(Class<?> clazz) {
-        ClassUtil.getClassesInPackage(clazz, clazz.getPackage().getName()).forEach(this::registerCommand);
+    public final void registerCommands(AbstractPlugin plugin) {
+        ClassUtil.getClassesInPackage(plugin.getClass(), plugin.getClass().getPackage().getName()).forEach(this::registerCommand);
     }
 
     public final void addListener(Class<?> clazz) {
