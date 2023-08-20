@@ -3,15 +3,15 @@ package org.lenuscreations.lelib;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.LongSerializationPolicy;
 import org.lenuscreations.lelib.adapters.ConfigurationAdapter;
 import org.lenuscreations.lelib.adapters.ConfigurationListAdapter;
 import org.lenuscreations.lelib.file.Configuration;
-import org.lenuscreations.lelib.file.FileHandler;
-import org.lenuscreations.lelib.file.value.impl.StringValue;
+import org.lenuscreations.lelib.rabbitmq.MQHandler;
+import org.lenuscreations.lelib.rabbitmq.type.MQType;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class LeLib {
 
@@ -25,12 +25,7 @@ public class LeLib {
             .create();
 
     public static void main(String[] args) {
-        //FileHandler fileHandler = new FileHandler("test.json");
-        FileHandler fileHandler = new FileHandler("test.yml", LeLib.class);
-        fileHandler.set(Configuration.builder().name("acbjdhaf").value(new StringValue("hi")).build());
-        fileHandler.save(LeLib.class);
 
-        System.out.println(fileHandler.getConfig("password").getValue());
     }
 
 }

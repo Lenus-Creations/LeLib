@@ -40,6 +40,11 @@
             <version>2.14.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>5.14.2</version>
+        </dependency>
     </dependencies>
 
 </project>
