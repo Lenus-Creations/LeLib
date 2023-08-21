@@ -161,11 +161,11 @@ public class MQHandler {
                                 if (!method.isAnnotationPresent(MQPacket.class)) continue;
 
                                 List<Object> parameters = new ArrayList<>();
-                                object.asMap().forEach((k, v) -> {
-                                    if (k.equalsIgnoreCase("action")) return;
+                                object.entrySet().forEach((k) -> {
+                                    if (k.getKey().equalsIgnoreCase("action")) return;
 
                                     for (MQParameter<?> parameter : this.parameters) {
-                                        Object obj = parameter.parse(v);
+                                        Object obj = parameter.parse(k.getValue());
                                         if (obj != null) {
                                             parameters.add(obj);
                                             break;
