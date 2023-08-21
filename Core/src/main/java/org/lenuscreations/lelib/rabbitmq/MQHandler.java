@@ -96,8 +96,8 @@ public class MQHandler {
         this.start();
     }
 
-    public Status send(String queue, JsonObject object) {
-        object.addProperty("action", queue);
+    public Status send(String queue, String action, JsonObject object) {
+        object.addProperty("action", action);
 
         try {
             channel.basicPublish("", queue, false, null, object.toString().getBytes());
@@ -107,9 +107,9 @@ public class MQHandler {
         }
     }
 
-    public Status send(String queue, Map<String, Object> map) {
+    public Status send(String queue, String action, Map<String, Object> map) {
         JsonObject object = (JsonObject) new JsonParser().parse(LeLib.GSON.toJson(map));
-        return this.send(queue, object);
+        return this.send(queue, action, object);
     }
 
     @SneakyThrows
