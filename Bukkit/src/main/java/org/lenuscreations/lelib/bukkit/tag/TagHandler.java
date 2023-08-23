@@ -129,6 +129,8 @@ public class TagHandler {
         if (disguiseHandler.isDisguised(player.getUniqueId())) name = disguiseHandler.getDisguise(player).getActualName();
 
         Team team = scoreboard.getTeam(name);
+        if (team == null) return;
+
         team.removeEntry(name);
         team.unregister();
 
