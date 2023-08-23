@@ -168,7 +168,7 @@ public class AbstractPlugin extends JavaPlugin {
         this.addListener(GUIListener.class);
 
         CommandHandler.init();
-        registerCommand(TestCommands.class);
+        //registerCommand(TestCommands.class);
 
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {

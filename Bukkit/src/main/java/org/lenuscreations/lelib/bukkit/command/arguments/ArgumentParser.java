@@ -68,21 +68,21 @@ public class ArgumentParser {
         else return new String[0];
 
         if (value.startsWith("\"")) {
-            value = value.substring(1);
-            args = shift(args);
-
-            if (value.endsWith("\"")) value = value.substring(0, value.length() - 1);
+            if (value.endsWith("\"")) value = value.substring(1).substring(0, value.length() - 2);
             else {
+                String newValue = value.substring(1);
+                args = shift(args);
+                String[] argsCopy = args.clone();
                 for (String argument : args) {
-                    value += " " + argument;
-                    args = shift(args);
+                    newValue += " " + argument;
+                    argsCopy = shift(argsCopy);
                     if (argument.endsWith("\"")) {
-                        Argument a = new Argument(ArgumentType.ARGUMENT, arg.name(), value, null);
+                        Argument a = new Argument(ArgumentType.ARGUMENT, arg.name(), newValue.substring(0, newValue.length() - 1), null);
 
                         int size = this.args.size();
                         this.args.put(size, a);
 
-                        return args;
+                        return argsCopy;
                     }
                 }
             }
@@ -141,21 +141,21 @@ public class ArgumentParser {
 
             String value = args[index];
             if (value.startsWith("\"")) {
-                if (!value.endsWith("\"")) {
-                    value = value.substring(1);
-                    args = shift(args, args[index]);
-
-                    for (int i = index; i < args.length; i++) {
-                        String argument = args[i];
-                        value += " " + argument;
-                        args = shift(args, args[index]);
+                if (value.endsWith("\"")) value = value.substring(1).substring(0, value.length() - 2);
+                else {
+                    String newValue = value.substring(1);
+                    args = shift(args);
+                    String[] argsCopy = args.clone();
+                    for (String argument : args) {
+                        newValue += " " + argument;
+                        argsCopy = shift(argsCopy);
                         if (argument.endsWith("\"")) {
-                            Argument a = new Argument(ArgumentType.ARGUMENT, flagValue.valueName(), value.substring(0, value.length() - 2), flagValue.flagName());
+                            Argument a = new Argument(ArgumentType.ARGUMENT, flagValue.valueName(), newValue.substring(0, newValue.length() - 1), flagName);
 
                             int size = this.args.size();
                             this.args.put(size, a);
 
-                            return args;
+                            return argsCopy;
                         }
                     }
                 }
@@ -164,7 +164,7 @@ public class ArgumentParser {
             ParameterType<?, CommandSender> parameterType = CommandHandler.getParameterTypes().get(parameter.getType());
             if (parameterType == null) throw new RuntimeException();
 
-            Object valueObject = parameterType.parse(executor, args[index]);
+            Object valueObject = parameterType.parse(executor, value);
             Argument argument = new Argument(ArgumentType.FLAG_VALUE, flagValue.valueName(), valueObject, flagValue.flagName());
 
             int size = this.args.size();
