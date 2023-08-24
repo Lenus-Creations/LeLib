@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.SimplePluginManager;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 import org.lenuscreations.lelib.bukkit.command.parameters.*;
@@ -91,6 +92,8 @@ public class CommandHandler {
 
         BukkitCommand bukkitCommand = new BukkitCommand(node);
         map.register(AbstractPlugin.getInstance().getDescription().getName().toLowerCase(), bukkitCommand);
+
+        new LeLibHelpTopic(node);
     }
 
     public static void registerParameter(Class<?> clazz, ParameterType<?, CommandSender> parameterType) {
