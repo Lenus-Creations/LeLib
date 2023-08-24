@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.SimplePluginManager;
+import org.lenuscreations.lelib.LeLib;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 import org.lenuscreations.lelib.bukkit.command.parameters.*;
 import org.lenuscreations.lelib.command.Command;
@@ -90,10 +91,10 @@ public class CommandHandler {
     private static void registerNode(CommandNode node) {
         nodes.add(node);
 
+        LeLibHelpTopic helpTopic = new LeLibHelpTopic(node);
         BukkitCommand bukkitCommand = new BukkitCommand(node);
         map.register(AbstractPlugin.getInstance().getDescription().getName().toLowerCase(), bukkitCommand);
 
-        new LeLibHelpTopic(node);
     }
 
     public static void registerParameter(Class<?> clazz, ParameterType<?, CommandSender> parameterType) {
