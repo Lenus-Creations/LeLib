@@ -16,7 +16,7 @@ public class ChatInputHandler {
 
     public static Map<Player, BukkitRunnable> expiry = new HashMap<>();
 
-    public static ChatInput sendInput(Player player , Consumer<ChatOutput> outputConsumer) {
+    public static ChatInput sendInput(Player player, Consumer<ChatOutput> outputConsumer) {
         return sendInput(player, -1, outputConsumer);
     }
 

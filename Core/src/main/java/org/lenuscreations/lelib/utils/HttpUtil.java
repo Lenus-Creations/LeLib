@@ -16,17 +16,24 @@ import java.util.Map;
 public class HttpUtil {
 
     @SneakyThrows
+    public static JsonObject fetch(String url) {
+        return fetch(url, null);
+    }
+
+    @SneakyThrows
     public static JsonObject fetch(String url, Map<String, Object> body) {
         URL u = new URL(url);
         HttpURLConnection con = (HttpURLConnection) u.openConnection();
-        con.setRequestMethod(body.getOrDefault("method", "GET").toString());
 
-        if (body.containsKey("headers")) {
-            Map<String, String> headers = (Map<String, String>) body.get("headers");
-            for (String key : headers.keySet()) {
-                con.setRequestProperty(key, headers.get(key));
+        if (body != null) {
+            con.setRequestMethod(body.getOrDefault("method", "GET").toString());
+            if (body.containsKey("headers")) {
+                Map<String, String> headers = (Map<String, String>) body.get("headers");
+                for (String key : headers.keySet()) {
+                    con.setRequestProperty(key, headers.get(key));
+                }
             }
-        }
+        } else con.setRequestMethod("GET");
 
         // get json response
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));

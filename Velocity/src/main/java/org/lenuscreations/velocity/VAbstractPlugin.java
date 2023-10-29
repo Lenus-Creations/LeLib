@@ -10,14 +10,8 @@ import org.lenuscreations.velocity.command.CommandHandler;
 import org.lenuscreations.velocity.command.test.TestCmd;
 import org.slf4j.Logger;
 
-@Plugin(
-        id = "velocity",
-        name = "Velocity",
-        version = "1.0-SNAPSHOT",
-        authors = {"grcq"}
-)
 @Getter
-public class VAbstractPlugin {
+public abstract class VAbstractPlugin {
 
     @Getter
     private static VAbstractPlugin instance;
@@ -25,6 +19,9 @@ public class VAbstractPlugin {
     private final ProxyServer server;
     private final Logger logger;
 
+    /*
+     * Create your own constructor exactly like this.
+     */
     @Inject
     public VAbstractPlugin(ProxyServer server, Logger logger) {
         this.server = server;
@@ -35,6 +32,6 @@ public class VAbstractPlugin {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        CommandHandler.registerCommand(TestCmd.class);
+
     }
 }

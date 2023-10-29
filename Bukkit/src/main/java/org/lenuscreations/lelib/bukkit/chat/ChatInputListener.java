@@ -29,7 +29,6 @@ public class ChatInputListener {
             ChatInputHandler.expiry.remove(e.getPlayer());
         }
 
-
         inputs.remove(e.getPlayer());
     }
 

@@ -1,6 +1,7 @@
 package org.lenuscreations.velocity.command;
 
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
@@ -8,6 +9,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.lenuscreations.lelib.command.Command;
 import org.lenuscreations.lelib.command.ParameterType;
 import org.lenuscreations.velocity.VAbstractPlugin;
+import org.lenuscreations.velocity.command.parameters.*;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -47,6 +49,19 @@ public class CommandHandler {
         CommandNode node = new CommandNode(method, command, instance);
         VelocityCommand velocityCommand = new VelocityCommand(node);
         VAbstractPlugin.getInstance().getServer().getCommandManager().register(command.name(), velocityCommand, command.aliases());
+    }
+
+    static {
+        registerParameterType(String.class, new StringParameter());
+        registerParameterType(Integer.class, new IntegerParameter());
+        registerParameterType(int.class, new IntegerParameter());
+        registerParameterType(Double.class, new DoubleParameter());
+        registerParameterType(double.class, new DoubleParameter());
+        registerParameterType(Float.class, new FloatParameter());
+        registerParameterType(float.class, new FloatParameter());
+        registerParameterType(Boolean.class, new BooleanParameter());
+        registerParameterType(boolean.class, new BooleanParameter());
+        registerParameterType(Player.class, new PlayerParameter());
     }
 
 }
