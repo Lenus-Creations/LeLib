@@ -79,6 +79,11 @@
             <artifactId>JDA</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.lenuscreations</groupId>
+            <artifactId>Velocity</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>
