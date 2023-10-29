@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>Bukkit</module>
+        <module>Velocity</module>
         <module>Core</module>
         <module>JDA</module>
         <module>build</module>
