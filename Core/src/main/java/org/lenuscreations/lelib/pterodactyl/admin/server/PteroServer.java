@@ -2,11 +2,13 @@ package org.lenuscreations.lelib.pterodactyl.admin.server;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import org.lenuscreations.lelib.pterodactyl.ServerStatus;
 import org.lenuscreations.lelib.pterodactyl.admin.PteroAdmin;
 import org.lenuscreations.lelib.pterodactyl.admin.node.PteroNode;
 import org.lenuscreations.lelib.pterodactyl.client.PteroClient;
 
+@ToString
 @Getter
 @AllArgsConstructor
 public class PteroServer {

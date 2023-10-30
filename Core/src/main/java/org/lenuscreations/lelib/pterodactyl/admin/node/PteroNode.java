@@ -1,8 +1,12 @@
 package org.lenuscreations.lelib.pterodactyl.admin.node;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import org.lenuscreations.lelib.pterodactyl.admin.location.PteroLocation;
 
+@ToString
+@Getter
 @AllArgsConstructor
 public class PteroNode {
 

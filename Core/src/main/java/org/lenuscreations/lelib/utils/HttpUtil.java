@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import okhttp3.OkHttpClient;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -31,9 +32,14 @@ public class HttpUtil {
                 Map<String, String> headers = (Map<String, String>) body.get("headers");
                 for (String key : headers.keySet()) {
                     con.setRequestProperty(key, headers.get(key));
+                    System.out.println(key + ": " + headers.get(key));
                 }
             }
         } else con.setRequestMethod("GET");
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("Accept", "application/json");
+
+        con.connect();
 
         // get json response
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -45,20 +51,28 @@ public class HttpUtil {
 
         con.disconnect();
 
+        System.out.println(content.toString());
+
         return (JsonObject) new JsonParser().parse(content.toString());
     }
 
+    @SneakyThrows
     public static JsonObject getPterodactylApi(String url, String token) {
-        Map<String, Object> body = new HashMap<>();
+        OkHttpClient client = new OkHttpClient();
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Accept", "application/json");
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + token);
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + token)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/vnd.pterodactyl.v1+json")
+                .addHeader("User-Agent", "Ptero4J/v0.1")
+                .build();
 
-        body.put("headers", headers);
+        okhttp3.Response response = client.newCall(request).execute();
+        JsonObject object = (JsonObject) new JsonParser().parse(response.body().string());
 
-        return fetch(url, body);
+        response.close();
+        return object.getAsJsonObject("attributes");
     }
 
     @SneakyThrows
