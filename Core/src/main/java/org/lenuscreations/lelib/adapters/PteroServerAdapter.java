@@ -59,7 +59,7 @@ public class PteroServerAdapter implements JsonSerializer<PteroServer>, JsonDese
         featureLimits.addProperty("allocations", pteroServer.getAllocationLimit());
         featureLimits.addProperty("backups", pteroServer.getBackupsLimit());
         object.add("feature_limits", featureLimits);
-        
+
         object.addProperty("createdAt", pteroServer.getCreatedAt());
         object.addProperty("updatedAt", pteroServer.getUpdatedAt());
         return object;
