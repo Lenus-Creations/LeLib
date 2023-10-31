@@ -45,6 +45,7 @@ public class PteroServerAdapter implements JsonSerializer<PteroServer>, JsonDese
         object.addProperty("description", pteroServer.getDescription());
         object.add("status", jsonSerializationContext.serialize(pteroServer.getStatus()));
         object.addProperty("suspended", pteroServer.isSuspended());
+
         JsonObject limits = new JsonObject();
         limits.addProperty("memory", pteroServer.getMemoryLimit());
         limits.addProperty("swap", pteroServer.getSwapLimit());
@@ -52,11 +53,13 @@ public class PteroServerAdapter implements JsonSerializer<PteroServer>, JsonDese
         limits.addProperty("io", pteroServer.getIoLimit());
         limits.addProperty("cpu", pteroServer.getCpuLimit());
         object.add("limits", limits);
+
         JsonObject featureLimits = new JsonObject();
         featureLimits.addProperty("databases", pteroServer.getDatabaseLimit());
         featureLimits.addProperty("allocations", pteroServer.getAllocationLimit());
         featureLimits.addProperty("backups", pteroServer.getBackupsLimit());
         object.add("feature_limits", featureLimits);
+        
         object.addProperty("createdAt", pteroServer.getCreatedAt());
         object.addProperty("updatedAt", pteroServer.getUpdatedAt());
         return object;
