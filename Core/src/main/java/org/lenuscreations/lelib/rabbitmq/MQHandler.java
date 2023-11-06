@@ -3,10 +3,7 @@ package org.lenuscreations.lelib.rabbitmq;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Consumer;
+import com.rabbitmq.client.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -34,6 +31,8 @@ public class MQHandler {
     private final String queue;
     private final Connection connection;
     private final Channel channel;
+
+    public static float MAX_TIMEOUT = 60000.0F;
 
 
     public MQHandler(String host, int port, String username, String password, String queue) {
@@ -112,6 +111,47 @@ public class MQHandler {
         return this.send(queue, action, object);
     }
 
+    private Map<String, JsonObject> responses = new HashMap<>();
+
+    public JsonObject get(String queue, String action, JsonObject object) {
+        object.addProperty("action", action);
+        String correlationId = UUID.randomUUID().toString();
+
+        try {
+            AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
+                    .correlationId(correlationId)
+                    .replyTo(this.queue)
+                    .build();
+
+            channel.basicPublish("", queue, false, properties, object.toString().getBytes());
+
+            float time = 0.0F;
+            while (!responses.containsKey(correlationId)) {
+                Thread.sleep(10);
+                time += 10.0F;
+
+                if (time >= MAX_TIMEOUT) {
+                    break;
+                }
+            }
+
+            JsonObject response = responses.get(correlationId);
+            if (response == null) {
+                response = new JsonObject();
+                response.addProperty("status", "failed");
+                response.addProperty("error", "timeout");
+            }
+
+            responses.remove(correlationId);
+            return response;
+        } catch (Exception e) {
+            JsonObject error = new JsonObject();
+            error.addProperty("status", "failed");
+            error.addProperty("error", e.getMessage());
+            return error;
+        }
+    }
+
     @SneakyThrows
     private void start() {
         this.channel.basicConsume(queue, true, (tag, msg) -> {
@@ -121,6 +161,10 @@ public class MQHandler {
                 if (object == null) return;
 
                 String action = object.get("action").getAsString();
+                if (action.equals("response")) {
+                    responses.put(object.get("correlationId").getAsString(), object);
+                    return;
+                }
                 switch (packetReceiveMethod) {
                     case GSON:
                         for (MQListener listener : listeners) {
@@ -131,7 +175,16 @@ public class MQHandler {
 
                                 MQPacket packet = method.getDeclaredAnnotation(MQPacket.class);
                                 if (Arrays.asList(packet.value()).contains(action)) {
-                                    method.invoke(listener, object);
+                                    if (msg.getProperties() != null && msg.getProperties().getReplyTo() != null) {
+                                        JsonObject response = (JsonObject) method.invoke(listener, object);
+                                        if (response == null) break;
+
+                                        response.addProperty("correlationId", msg.getProperties().getCorrelationId());
+                                        response.addProperty("return_from", this.queue);
+                                        send(msg.getProperties().getReplyTo(), "response", response);
+                                    } else {
+                                        method.invoke(listener, object);
+                                    }
                                 }
                             }
                         }

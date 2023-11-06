@@ -14,6 +14,7 @@ import org.lenuscreations.lelib.pterodactyl.admin.node.PteroNode;
 import org.lenuscreations.lelib.pterodactyl.admin.server.PteroServer;
 import org.lenuscreations.lelib.pterodactyl.client.PteroClient;
 import org.lenuscreations.lelib.rabbitmq.MQHandler;
+import org.lenuscreations.lelib.rabbitmq.test.TestListener;
 import org.lenuscreations.lelib.rabbitmq.type.MQType;
 
 import java.util.ArrayList;
@@ -40,8 +41,12 @@ public class LeLib {
     public static Gson GSON_EMPTY = new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.STRING).create();
 
     public static void main(String[] args) {
-        PteroAdmin admin = new PteroAdmin("https://panel.perlexmc.com", "ptla_opwpM7BklvncNfWTPQ0iyPbNFq344aB02h20LNsRIAZ");
-        System.out.println(admin.getServer("32"));
+        //PteroAdmin admin = new PteroAdmin("https://panel.perlexmc.com", "ptla_opwpM7BklvncNfWTPQ0iyPbNFq344aB02h20LNsRIAZ");
+        //System.out.println(admin.getServer("32"));
+
+        MQHandler handler = new MQHandler("cow-01.rmq2.cloudamqp.com", 5672, "rbbtwhpv", "L2Dt4Bhz9a7dG70ukN0eQJU7CxococR9", "rbbtwhpv", "test");
+        handler.register(new TestListener());
+        System.out.println(handler.get("test", "idk", new JsonObject()).toString());
     }
 
 }
