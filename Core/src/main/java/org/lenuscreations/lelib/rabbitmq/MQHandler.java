@@ -95,6 +95,10 @@ public class MQHandler {
         this.start();
     }
 
+    public Status send(String queue, Packet packet) {
+        return this.send(queue, packet.getAction(), packet.getMessage());
+    }
+
     public Status send(String queue, String action, JsonObject object) {
         object.addProperty("action", action);
 
@@ -112,6 +116,21 @@ public class MQHandler {
     }
 
     private Map<String, JsonObject> responses = new HashMap<>();
+
+    /*
+     * Requires Packet#handle method implemented.
+     */
+    public void get(String queue, Packet packet) {
+        JsonObject object = this.get(queue, packet.getAction(), packet.getMessage());
+        if (object.get("error") != null && !object.get("error").isJsonNull()) {
+            if (packet.async()) new Thread(() -> packet.handleError(object)).start();
+            else packet.handleError(object);
+            return;
+        }
+
+        if (packet.async()) new Thread(() -> packet.handle(object)).start();
+        else packet.handle(object);
+    }
 
     public JsonObject get(String queue, String action, JsonObject object) {
         object.addProperty("action", action);
