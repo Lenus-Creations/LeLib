@@ -21,7 +21,7 @@ public class VelocityCommand implements SimpleCommand {
             node.execute(invocation.source(), invocation.arguments());
         } catch (InvocationTargetException | IllegalAccessException e) {
             invocation.source().sendMessage(Component.text("An error occurred whilst executing this command.", NamedTextColor.RED));
-            invocation.source().sendMessage(Component.text(e.getMessage(), NamedTextColor.RED));
+            if (e.getMessage() != null) invocation.source().sendMessage(Component.text(e.getMessage(), NamedTextColor.RED));
         }
     }
 
