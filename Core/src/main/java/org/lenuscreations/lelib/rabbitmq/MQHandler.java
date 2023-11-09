@@ -12,9 +12,9 @@ import org.lenuscreations.lelib.rabbitmq.impl.*;
 import org.lenuscreations.lelib.rabbitmq.type.MQType;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MQHandler {
 
@@ -96,7 +96,12 @@ public class MQHandler {
     }
 
     public Status send(String queue, Packet packet) {
-        return this.send(queue, packet.getAction(), packet.getMessage());
+        AtomicReference<Status> status = new AtomicReference<>(Status.FAILED);
+        if (packet.async()) {
+            new Thread(() -> status.set(this.send(queue, packet.getAction(), packet.getMessage()))).start();
+        } else status.set(this.send(queue, packet.getAction(), packet.getMessage()));
+
+        return status.get();
     }
 
     public Status send(String queue, String action, JsonObject object) {
@@ -115,7 +120,7 @@ public class MQHandler {
         return this.send(queue, action, object);
     }
 
-    private Map<String, JsonObject> responses = new HashMap<>();
+    private final Map<String, JsonObject> responses = new HashMap<>();
 
     /*
      * Requires Packet#handle method implemented.
