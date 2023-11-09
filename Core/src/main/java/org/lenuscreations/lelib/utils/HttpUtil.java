@@ -94,6 +94,7 @@ public class HttpUtil {
         URL u = new URL(url);
         HttpURLConnection con = (HttpURLConnection) u.openConnection();
         con.setRequestMethod("POST");
+        con.setDoOutput(true);
 
         con.getOutputStream().write(body.toString().getBytes());
 
