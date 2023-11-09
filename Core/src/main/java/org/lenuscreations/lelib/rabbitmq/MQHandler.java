@@ -157,6 +157,7 @@ public class MQHandler {
             JsonObject response = responses.get(correlationId);
             if (response == null) {
                 response = new JsonObject();
+                response.addProperty("message", "Packet timed out.");
                 response.addProperty("status", "failed");
                 response.addProperty("error", "timeout");
             }
@@ -165,6 +166,7 @@ public class MQHandler {
             return response;
         } catch (Exception e) {
             JsonObject error = new JsonObject();
+            error.addProperty("message", "Unable to sent packet. Connection issues?");
             error.addProperty("status", "failed");
             error.addProperty("error", e.getMessage());
             return error;

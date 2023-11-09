@@ -13,7 +13,8 @@ public interface Packet {
     }
 
     default void handleError(JsonObject error) {
-
+        if (error.has("message")) throw new RuntimeException("An error occurred whilst processing the packet. Status: " + error.get("status").getAsString() + ", reason: " + error.get("message").getAsString());
+        else throw new RuntimeException("An unknown error has occurred when processing the packet. Status: " + error.get("status").getAsString());
     }
 
     default boolean async() {
