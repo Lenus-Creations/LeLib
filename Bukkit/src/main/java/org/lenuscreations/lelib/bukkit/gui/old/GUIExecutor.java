@@ -1,10 +1,11 @@
-package org.lenuscreations.lelib.bukkit.gui;
+package org.lenuscreations.lelib.bukkit.gui.old;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface GUIExecutor {

@@ -1,4 +1,4 @@
-package org.lenuscreations.lelib.bukkit.gui;
+package org.lenuscreations.lelib.bukkit.gui.old;
 
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -8,7 +8,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
-import org.lenuscreations.lelib.bukkit.utils.ItemBuilder;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -17,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class GUIHandler {
 
     public static Map<Player, Class<?>> openedGUIs = new HashMap<>();
