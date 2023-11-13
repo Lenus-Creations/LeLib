@@ -13,9 +13,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.SimplePluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.lenuscreations.lelib.LeLib;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 import org.lenuscreations.lelib.bukkit.command.parameters.*;
+import org.lenuscreations.lelib.bukkit.utils.ClassUtils;
 import org.lenuscreations.lelib.command.Command;
 import org.lenuscreations.lelib.command.ParameterType;
 
@@ -54,6 +56,12 @@ public class CommandHandler {
             commandMap.setAccessible(true);
 
             map = (CommandMap) commandMap.get(spm);
+        }
+    }
+
+    public void registerAll(JavaPlugin plugin) {
+        for (Class<?> clazz : ClassUtils.getClassesInPackage(plugin.getClass(), plugin.getClass().getPackage().getName())) {
+            register(clazz);
         }
     }
 
