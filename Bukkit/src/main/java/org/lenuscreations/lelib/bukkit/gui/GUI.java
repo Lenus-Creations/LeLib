@@ -33,7 +33,7 @@ public abstract class GUI {
 
     }
 
-    public final void open(Player player) {
+    public void open(Player player) {
         Inventory inventory = Bukkit.createInventory(null, getSize(player), getTitle(player));
 
         BukkitRunnable runnable = new BukkitRunnable() {
@@ -55,7 +55,7 @@ public abstract class GUI {
         player.openInventory(inventory);
     }
 
-    private ItemStack toItemStack(Player player, MenuItem item) {
+    ItemStack toItemStack(Player player, MenuItem item) {
         ItemStack itemStack = new ItemStack(item.getMaterial(player), item.getAmount(player));
         itemStack.getData().setData(item.getData(player));
 
