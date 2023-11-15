@@ -1,20 +1,17 @@
 package org.lenuscreations.lelib.bukkit.command.test;
 
-import com.google.gson.JsonObject;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 import org.lenuscreations.lelib.bukkit.disguise.Disguise;
 import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
-import org.lenuscreations.lelib.bukkit.gui.example.ExampleGUI;
+import org.lenuscreations.lelib.bukkit.gui.old.example.ExampleGUI;
 import org.lenuscreations.lelib.bukkit.tag.TagHandler;
 import org.lenuscreations.lelib.bukkit.utils.PlayerUtils;
 import org.lenuscreations.lelib.command.Arg;
 import org.lenuscreations.lelib.command.Command;
 import org.lenuscreations.lelib.command.Flag;
 import org.lenuscreations.lelib.command.FlagValue;
-
-import java.util.UUID;
 
 public class TestCommands {
 

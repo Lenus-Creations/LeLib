@@ -4,7 +4,6 @@ import dev.grcq.v1_12_r1.V1_12_R1;
 import dev.grcq.v1_16_r3.V1_16_R3;
 import dev.grcq.v1_8_r3.V1_8_R3;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -14,23 +13,24 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.lenuscreations.lelib.bukkit.chat.ChatInputListener;
 import org.lenuscreations.lelib.bukkit.command.CommandHandler;
-import org.lenuscreations.lelib.bukkit.command.test.TestCommands;
 import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
 import org.lenuscreations.lelib.bukkit.event.EventManager;
-import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
-import org.lenuscreations.lelib.bukkit.hologram.HologramHandler;
+import org.lenuscreations.lelib.bukkit.gui.old.GUIHandler;
 import org.lenuscreations.lelib.bukkit.nick.NicknameHandler;
 import org.lenuscreations.lelib.bukkit.server.IServer;
 import org.lenuscreations.lelib.bukkit.tag.TagHandler;
-import org.lenuscreations.lelib.bukkit.utils.ClassUtils;
 import org.lenuscreations.lelib.bukkit.utils.Util;
 import org.lenuscreations.lelib.database.Credentials;
 import org.lenuscreations.lelib.database.IDatabase;
 import org.lenuscreations.lelib.utils.ClassUtil;
+import org.lenuscreations.lelib.utils.TimeUtil;
 
-import java.lang.reflect.Method;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
 public class AbstractPlugin extends JavaPlugin {
@@ -44,8 +44,6 @@ public class AbstractPlugin extends JavaPlugin {
 
     @Getter
     private EventManager eventHandler;
-    @Getter
-    private GUIHandler guiHandler;
     @Getter
     private DisguiseHandler disguiseHandler;
     @Getter
@@ -62,7 +60,6 @@ public class AbstractPlugin extends JavaPlugin {
         instance = this;
 
         this.eventHandler = new EventManager();
-        this.guiHandler = new GUIHandler();
         this.disguiseHandler = new DisguiseHandler();
         this.tagHandler = new TagHandler();
         this.nicknameHandler = new NicknameHandler();
@@ -145,9 +142,28 @@ public class AbstractPlugin extends JavaPlugin {
             }
 
             @Override
+            @SneakyThrows
             public void log(String message) {
                 Bukkit.getServer().getLogger().log(Level.INFO, message);
-                // TODO: write to file.
+
+                File file = new File("lelib_logs/log-" + new Date() + ".txt");
+                if (!file.exists()) {
+                    file.getParentFile().mkdirs();
+                    file.createNewFile();
+                }
+
+                String log = "[" + TimeUtil.format(new Date()) + "] " + message + "\n";
+                String previous;
+
+                try (DataInputStream dis = new DataInputStream(Files.newInputStream(file.toPath()))) {
+                    previous = dis.readUTF();
+                }
+
+                previous += log;
+
+                DataOutputStream dos = new DataOutputStream(Files.newOutputStream(file.toPath()));
+                dos.writeUTF(previous);
+                dos.close();
             }
 
             @Override

@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
 @UtilityClass
 public class TimeUtil {
 
-    private static DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-    private static DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
-    private static DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+    public static DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    public static DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+    public static DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
     public static String format(Date date) {
         return DEFAULT_DATE_FORMAT.format(date);

@@ -3,6 +3,16 @@ package org.lenuscreations.lelib.bukkit.utils;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
+import java.io.IOException;
+import java.net.URL;
+import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
 @UtilityClass
 public class ClassUtils {
 
@@ -14,6 +24,55 @@ public class ClassUtils {
     @SneakyThrows
     public static Class<?> getOBCClass(String name) {
         return Class.forName("org.bukkit.craftbukkit." + Util.getNMSVersion() + "." + name);
+    }
+
+    /**
+     * Retrieves all classes in package and sub-packages
+     * @param packageName Package name
+     * @return Collection of classes in the package
+     */
+    public static Collection<Class<?>> getClassesInPackage(Class<?> mainClass, String packageName) {
+        List<Class<?>> classes = new ArrayList<>();
+
+        CodeSource src = mainClass.getProtectionDomain().getCodeSource();
+        URL resource = src.getLocation();
+        String relPath = packageName.replace('.', '/');
+        String resPath = resource.getPath().replace("%20", " ");
+        String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
+
+        JarFile jarFile;
+        try {
+            jarFile = new JarFile(jarPath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Enumeration<JarEntry> entries = jarFile.entries();
+
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            String entryName = entry.getName();
+            String className = null;
+
+            if (entryName.endsWith(".class") && entryName.startsWith(relPath) && entryName.length() > (relPath.length() + "/".length())) {
+                className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
+            }
+
+            if (className != null) {
+                Class<?> clazz = null;
+                try {
+                    clazz = Class.forName(className);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                if (clazz != null) {
+                    classes.add(clazz);
+                }
+            }
+        }
+
+        return classes;
     }
 
 }

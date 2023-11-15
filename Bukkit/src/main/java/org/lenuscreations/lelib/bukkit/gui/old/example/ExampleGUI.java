@@ -1,4 +1,4 @@
-package org.lenuscreations.lelib.bukkit.gui.example;
+package org.lenuscreations.lelib.bukkit.gui.old.example;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -6,10 +6,9 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
-import org.lenuscreations.lelib.bukkit.gui.ClickListener;
-import org.lenuscreations.lelib.bukkit.gui.GUI;
-import org.lenuscreations.lelib.bukkit.gui.GUIExecutor;
-import org.lenuscreations.lelib.bukkit.gui.GUIHandler;
+import org.lenuscreations.lelib.bukkit.gui.old.ClickListener;
+import org.lenuscreations.lelib.bukkit.gui.old.GUI;
+import org.lenuscreations.lelib.bukkit.gui.old.GUIExecutor;
 
 import java.util.HashMap;
 import java.util.Map;
