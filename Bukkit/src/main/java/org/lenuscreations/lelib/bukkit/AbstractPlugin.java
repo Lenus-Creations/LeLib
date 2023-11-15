@@ -12,6 +12,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import org.lenuscreations.lelib.bukkit.chat.ChatInputListener;
 import org.lenuscreations.lelib.bukkit.command.CommandHandler;
 import org.lenuscreations.lelib.bukkit.command.test.TestCommands;
 import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
@@ -165,7 +166,7 @@ public class AbstractPlugin extends JavaPlugin {
             }
         };
 
-        this.addListener(GUIListener.class);
+        this.addListener(GUIListener.class, ChatInputListener.class);
 
         CommandHandler.init();
         //registerCommand(TestCommands.class);

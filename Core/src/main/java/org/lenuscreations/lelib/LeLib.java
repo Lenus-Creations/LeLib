@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.LongSerializationPolicy;
 import org.lenuscreations.lelib.adapters.*;
+import org.lenuscreations.lelib.arguments.ArgumentHandler;
+import org.lenuscreations.lelib.arguments.test.TestArguments;
 import org.lenuscreations.lelib.file.Configuration;
 import org.lenuscreations.lelib.pterodactyl.ServerStatus;
 import org.lenuscreations.lelib.pterodactyl.admin.PteroAdmin;
@@ -41,6 +43,10 @@ public class LeLib {
     public static Gson GSON_EMPTY = new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.STRING).create();
 
     public static void main(String[] args) {
+        ArgumentHandler handler = new ArgumentHandler();
+        handler.register(TestArguments.class);
+
+        handler.process(args);
     }
 
 }
