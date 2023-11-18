@@ -1,5 +1,6 @@
 package org.lenuscreations.lelib.bukkit.gui;
 
+import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,6 +16,8 @@ import java.util.Map;
 
 public abstract class PaginatedGUI extends GUI {
 
+    @Getter
+    @Setter
     private int page;
 
     public PaginatedGUI(int page) {
@@ -23,12 +26,6 @@ public abstract class PaginatedGUI extends GUI {
 
     public PaginatedGUI() {
         this(1);
-    }
-
-    public final void setPage(int page, Player player) {
-        this.page = page;
-        BukkitRunnable runnable = GUI.getRunnableMap().get(player.getUniqueId());
-        runnable.run();
     }
 
     abstract public String getTitlePerPage(Player player, int page);

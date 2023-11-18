@@ -14,11 +14,12 @@ public class GUIListener {
     public static void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
         GUI gui = GUI.getGuiMap().get(player.getUniqueId());
-        gui.onClose(player);
+        if (gui != null) gui.onClose(player);
 
         GUI.getGuiMap().remove(player.getUniqueId());
         BukkitRunnable runnable = GUI.getRunnableMap().get(player.getUniqueId());
-        runnable.cancel();
+        if (runnable != null) runnable.cancel();
+
         GUI.getRunnableMap().remove(player.getUniqueId());
     }
 

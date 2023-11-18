@@ -18,9 +18,13 @@ public interface MenuItem {
 
     Material getMaterial(Player player);
 
-    int getAmount(Player player);
+    default int getAmount(Player player) {
+        return 1;
+    }
 
-    byte getData(Player player);
+    default byte getData(Player player) {
+        return 0;
+    }
 
     void onClick(Player player, ClickType clickType, int slot);
 
