@@ -83,7 +83,8 @@ public abstract class PaginatedGUI extends GUI {
     }
 
     private int getMaxPage(Player player) {
-        if (getPageButtons(player).isEmpty()) return 1;
-        return (getMaxItemPerPage() / getPageButtons(player).size()) + 1;
+        int max = getPageButtons(player).size() / getMaxItemPerPage();
+        if (getPageButtons(player).size() % getMaxItemPerPage() != 0) max++;
+        return max;
     }
 }
