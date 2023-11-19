@@ -1,71 +1,79 @@
 package org.lenuscreations.lelib.bukkit.gui;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
-import org.lenuscreations.lelib.bukkit.utils.ItemBuilder;
+import org.lenuscreations.lelib.bukkit.utils.Util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
+@Getter
 public abstract class GUI {
 
-    @Getter
-    private static final Map<UUID, BukkitRunnable> runnableMap = new HashMap<>();
-    @Getter
-    private static final Map<UUID, GUI> guiMap = new HashMap<>();
+    @Setter private boolean autoUpdate = false;
+    @Setter private long autoUpdateTime = 15L;
+
+    public static final Map<Player, GUI> openGUIs = new HashMap<>();
+    public static final Map<Player, BukkitRunnable> tasks = new HashMap<>();
 
     abstract public String getTitle(Player player);
 
-    public int getSize(Player player) {
-        return 9 * 2;
+    abstract public Map<Integer, Button> getButtons(Player player);
+
+    public int size() {
+        return 9;
     }
 
-    abstract public Map<Integer, MenuItem> getContent(Player player, Inventory inventory);
+    public void onOpen(Player player) {}
 
-    public void onClose(Player player) {
+    public void onClose(Player player) {}
 
-    }
+    public void openGUI(Player player) {
+        Inventory inventory = createGUI(player);
 
-    public void open(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, getSize(player), getTitle(player));
+        onOpen(player);
+        openGUIs.put(player, this);
 
-        BukkitRunnable runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-                getContent(player, inventory).forEach((slot, item) -> inventory.setItem(slot, toItemStack(player, item)));
-            }
-        };
-        runnable.run();
-
-        GUISettings settings = this.getClass().getDeclaredAnnotation(GUISettings.class);
-        if (settings != null) {
-            if (settings.autoUpdate()) {
-                runnable.runTaskTimerAsynchronously(AbstractPlugin.getInstance(), settings.autoUpdateTime(), settings.autoUpdateTime());
-            }
-        }
-
-        runnableMap.put(player.getUniqueId(), runnable);
+        update(player);
         player.openInventory(inventory);
     }
 
-    ItemStack toItemStack(Player player, MenuItem item) {
-        ItemStack itemStack = new ItemStack(item.getMaterial(player), item.getAmount(player));
-        itemStack.getData().setData(item.getData(player));
+    private Inventory createGUI(Player player) {
+        Inventory inventory = Bukkit.getServer().createInventory(null, size(), Util.format(getTitle(player)));
 
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(item.getName(player));
-        meta.setLore(item.getLore(player));
-        itemStack.setItemMeta(meta);
+        for (Map.Entry<Integer, Button> entry : getButtons(player).entrySet()) {
+            Button button = entry.getValue();
+            ItemStack itemStack = button.createItem(player);
 
-        item.getEnchantments(player).forEach(itemStack::addUnsafeEnchantment);
-        return itemStack;
+            inventory.setItem(entry.getKey(), itemStack);
+        }
+
+        return inventory;
+    }
+
+    private void update(Player player) {
+
+        BukkitRunnable runnable = new BukkitRunnable() {
+
+            @Override
+            public void run() {
+
+                if (isAutoUpdate()) {
+                    player.getOpenInventory().getTopInventory().setContents(createGUI(player).getContents());
+                }
+
+            }
+
+        };
+        runnable.runTaskTimer(AbstractPlugin.getInstance(), 10L, getAutoUpdateTime());
+        tasks.put(player, runnable);
+
     }
 
 }

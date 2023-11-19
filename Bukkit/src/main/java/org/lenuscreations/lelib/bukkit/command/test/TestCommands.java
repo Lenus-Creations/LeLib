@@ -5,8 +5,6 @@ import org.bukkit.entity.Player;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 import org.lenuscreations.lelib.bukkit.disguise.Disguise;
 import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
-import org.lenuscreations.lelib.bukkit.gui.old.example.ExampleGUI;
-import org.lenuscreations.lelib.bukkit.gui.test.GUITest;
 import org.lenuscreations.lelib.bukkit.tag.TagHandler;
 import org.lenuscreations.lelib.bukkit.utils.PlayerUtils;
 import org.lenuscreations.lelib.command.Arg;
@@ -18,8 +16,6 @@ public class TestCommands {
 
     @Command(name = "testing")
     public void test(Player sender) {
-        GUITest exampleGUI = new GUITest();
-        exampleGUI.open(sender);
     }
 
     @Command(name = "test")

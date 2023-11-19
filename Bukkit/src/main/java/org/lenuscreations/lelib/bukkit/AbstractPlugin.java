@@ -183,7 +183,8 @@ public class AbstractPlugin extends JavaPlugin {
             }
         };
 
-        this.addListener(GUIListener.class, ChatInputListener.class);
+        this.addListener(ChatInputListener.class);
+        getServer().getPluginManager().registerEvents(new GUIListener(), this);
 
         CommandHandler.init();
         //registerCommand(TestCommands.class);

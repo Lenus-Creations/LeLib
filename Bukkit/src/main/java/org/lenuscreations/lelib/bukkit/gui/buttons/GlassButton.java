@@ -1,15 +1,13 @@
-package org.lenuscreations.lelib.bukkit.gui.defaults;
+package org.lenuscreations.lelib.bukkit.gui.buttons;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.material.MaterialData;
-import org.lenuscreations.lelib.bukkit.gui.MenuItem;
+import org.lenuscreations.lelib.bukkit.gui.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GlassPaneItem implements MenuItem {
+public class GlassButton extends Button {
 
     @Override
     public String getName(Player player) {
@@ -27,17 +25,12 @@ public class GlassPaneItem implements MenuItem {
     }
 
     @Override
-    public int getAmount(Player player) {
-        return 1;
-    }
-
-    @Override
-    public byte getData(Player player) {
+    public byte getDamageValue(Player player) {
         return 15;
     }
 
     @Override
-    public void onClick(Player player, ClickType clickType, int slot) {
-
+    public boolean cancelClick(Player player) {
+        return true;
     }
 }

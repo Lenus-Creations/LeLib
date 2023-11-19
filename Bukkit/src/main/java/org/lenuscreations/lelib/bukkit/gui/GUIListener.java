@@ -1,46 +1,54 @@
 package org.lenuscreations.lelib.bukkit.gui;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventPriority;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.lenuscreations.lelib.bukkit.event.EventListener;
 
-public class GUIListener {
+public class GUIListener implements Listener {
 
-    @EventListener(priority = EventPriority.HIGHEST, event = InventoryCloseEvent.class)
-    public static void onInventoryClose(InventoryCloseEvent event) {
-        Player player = (Player) event.getPlayer();
-        GUI gui = GUI.getGuiMap().get(player.getUniqueId());
-        if (gui != null) gui.onClose(player);
+    @EventHandler
+    public void onClick(InventoryClickEvent e) {
 
-        GUI.getGuiMap().remove(player.getUniqueId());
-        BukkitRunnable runnable = GUI.getRunnableMap().get(player.getUniqueId());
-        if (runnable != null) runnable.cancel();
+        Player player = (Player) e.getWhoClicked();
 
-        GUI.getRunnableMap().remove(player.getUniqueId());
+        if (GUI.openGUIs.containsKey(player)) {
+            GUI gui = GUI.openGUIs.get(player);
+            if (gui == null) return;
+
+            if (e.getClick() == ClickType.SHIFT_LEFT || e.getClick() == ClickType.SHIFT_RIGHT) {
+                e.setCancelled(true);
+            }
+
+            Button button = gui.getButtons(player).get(e.getSlot());
+            if (button == null) return;
+
+            if (button.cancelClick(player)) e.setCancelled(true);
+            button.onClick(player, e.getClick(), e.getSlot());
+        }
+
     }
 
-    @EventListener(priority = EventPriority.HIGHEST, event = InventoryClickEvent.class)
-    public static void onClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        GUI gui = GUI.getGuiMap().get(player.getUniqueId());
-        if (gui == null) {
-            return;
-        }
+    @EventHandler
+    public void onClose(InventoryCloseEvent e) {
+        Player player = (Player) e.getPlayer();
 
-        MenuItem item = gui.getContent(player, event.getInventory()).get(event.getSlot());
-        if (item == null) {
-            return;
-        }
+        if (GUI.openGUIs.containsKey(player)) {
+            GUI gui = GUI.openGUIs.get(player);
+            if (gui == null) return;
 
-        if (item.cancelClick()) {
-            event.setCancelled(true);
-        }
+            gui.onClose(player);
+            GUI.openGUIs.remove(player);
 
-        item.onClick(player, event.getClick(), event.getSlot());
+            BukkitRunnable runnable = GUI.tasks.get(player);
+            if (runnable != null) {
+                runnable.cancel();
+                GUI.tasks.remove(player);
+            };
+        }
     }
 
 }

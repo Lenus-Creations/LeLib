@@ -19,15 +19,21 @@ public class TabHandler {
 
     @SneakyThrows
     public void send(Player player) {
+        if (header == null && footer == null) return;
+
         PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter();
 
-        Field headerField = packet.getClass().getDeclaredField("a");
-        headerField.setAccessible(true);
-        headerField.set(packet, new ChatComponentText(header));
+        if (header != null) {
+            Field headerField = packet.getClass().getDeclaredField("a");
+            headerField.setAccessible(true);
+            headerField.set(packet, new ChatComponentText(header));
+        }
 
-        Field footerField = packet.getClass().getDeclaredField("b");
-        footerField.setAccessible(true);
-        footerField.set(packet, new ChatComponentText(footer));
+        if (footer != null) {
+            Field footerField = packet.getClass().getDeclaredField("b");
+            footerField.setAccessible(true);
+            footerField.set(packet, new ChatComponentText(footer));
+        }
 
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }

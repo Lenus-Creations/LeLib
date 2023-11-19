@@ -2,23 +2,24 @@ package org.lenuscreations.lelib.bukkit.gui;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
+import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.lenuscreations.lelib.bukkit.AbstractPlugin;
-import org.lenuscreations.lelib.bukkit.gui.defaults.GlassPaneItem;
-import org.lenuscreations.lelib.bukkit.gui.defaults.NextPageItem;
-import org.lenuscreations.lelib.bukkit.gui.defaults.PreviousPageItem;
+import org.lenuscreations.lelib.bukkit.gui.buttons.GlassButton;
+import org.lenuscreations.lelib.bukkit.gui.buttons.NextPageButton;
+import org.lenuscreations.lelib.bukkit.gui.buttons.PreviousPageButton;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class PaginatedGUI extends GUI {
 
-    @Getter
     @Setter
-    private int page;
+    @Getter
+    protected int page;
+
+    abstract public String getPerPageTitle(Player player);
+
+    abstract public Map<Integer, Button> getPageButtons(Player player);
 
     public PaginatedGUI(int page) {
         this.page = page;
@@ -28,43 +29,35 @@ public abstract class PaginatedGUI extends GUI {
         this(1);
     }
 
-    abstract public String getTitlePerPage(Player player, int page);
-
-    abstract public Map<Integer, MenuItem> getPageContent(Player player);
-
-    @Override
-    public final int getSize(Player player) {
-        return 9 + getMaxItemsPerPage();
-    }
-
-    @Override
-    public String getTitle(Player player) {
-        return getTitlePerPage(player, 1) + "[" + page + "/" + getMaxPage(player) + "]";
-    }
-
-    public int getMaxItemsPerPage() {
+    public int getPageSize() {
         return 9;
     }
 
-    private int getMaxPage(Player player) {
-        return (getMaxItemsPerPage() / getPageContent(player).size()) + 1;
+    public int getMaxItemPerPage() {
+        return 9;
     }
 
     @Override
-    public final Map<Integer, MenuItem> getContent(Player player, Inventory inventory) {
-        Map<Integer, MenuItem> buttons = new HashMap<>();
+    public final String getTitle(Player player) {
+        return getPerPageTitle(player) + " [" + page + "/" + getMaxPage(player) + "]";
+    }
+
+    @SneakyThrows
+    @Override
+    public final Map<Integer, Button> getButtons(Player player) {
+        Map<Integer, Button> buttons = new HashMap<>();
 
         for (int i = 0; i < 9; i++) {
-            buttons.put(i, new GlassPaneItem());
+            buttons.put(i, new GlassButton());
         }
 
         int toAdd = 9 + (page == 1 ? 0 : page * 9);
         boolean nextPage = false;
-        for (int i = toAdd; i < getMaxItemsPerPage() + toAdd; i++) {
-            MenuItem button = getPageContent(player).get(i);
+        for (int i = toAdd; i < getMaxItemPerPage() + toAdd; i++) {
+            Button button = getPageButtons(player).get(i);
             if (button == null) break;
 
-            if (getSize(player) - 10 + toAdd < i) {
+            if (size() - 10 + toAdd < i) {
                 nextPage = true;
                 break;
             }
@@ -73,36 +66,23 @@ public abstract class PaginatedGUI extends GUI {
         }
 
         if (nextPage) {
-            buttons.put(getSize(player) - 1, new NextPageItem(this));
+
+            buttons.put(size() - 1, new NextPageButton(this));
         }
 
         if (page > 1) {
-            buttons.put(getSize(player) - 9, new PreviousPageItem(this));
+            buttons.put(size() - 9, new PreviousPageButton(this));
         }
 
         return buttons;
     }
 
-    public final void open(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, getSize(player) + 9, getTitle(player));
-
-        BukkitRunnable runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-                getContent(player, inventory).forEach((slot, item) -> inventory.setItem(slot, toItemStack(player, item)));
-            }
-        };
-        runnable.run();
-
-        GUISettings settings = this.getClass().getDeclaredAnnotation(GUISettings.class);
-        if (settings != null) {
-            if (settings.autoUpdate()) {
-                runnable.runTaskTimerAsynchronously(AbstractPlugin.getInstance(), settings.autoUpdateTime(), settings.autoUpdateTime());
-            }
-        }
-
-        GUI.getRunnableMap().put(player.getUniqueId(), runnable);
-        player.openInventory(inventory);
+    @Override
+    public final int size() {
+        return (9 * 2) + getPageSize();
     }
 
+    private int getMaxPage(Player player) {
+        return (getMaxItemPerPage() / getPageButtons(player).size()) + 1;
+    }
 }
