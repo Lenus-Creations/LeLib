@@ -18,12 +18,17 @@ import org.lenuscreations.lelib.pterodactyl.client.PteroClient;
 import org.lenuscreations.lelib.rabbitmq.MQHandler;
 import org.lenuscreations.lelib.rabbitmq.test.TestListener;
 import org.lenuscreations.lelib.rabbitmq.type.MQType;
+import org.lenuscreations.lelib.utils.reflection.LClass;
+import org.lenuscreations.lelib.utils.reflection.LField;
+import org.lenuscreations.lelib.utils.reflection.LMethod;
+import org.lenuscreations.lelib.utils.reflection.ReflectionUtil;
 
 import java.util.ArrayList;
 
 public class LeLib {
 
-    public static Gson GSON = new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.STRING)
+    public static Gson GSON = new GsonBuilder()
+            .setLongSerializationPolicy(LongSerializationPolicy.STRING)
             .registerTypeAdapter(Configuration.class, new ConfigurationAdapter())
             .registerTypeAdapter(new TypeToken<ArrayList<Configuration>>() {}.getType(), new ConfigurationListAdapter())
             .registerTypeAdapter(ServerStatus.class, new ServerStatusAdapter())
@@ -31,7 +36,9 @@ public class LeLib {
             .registerTypeAdapter(PteroNode.class, new PteroNodeAdapter())
             .registerTypeAdapter(PteroServer.class, new PteroServerAdapter())
             .create();
-    public static Gson GSON_PPG = new GsonBuilder().setPrettyPrinting().setLongSerializationPolicy(LongSerializationPolicy.STRING)
+    public static Gson GSON_PPG = new GsonBuilder()
+            .setPrettyPrinting().
+            setLongSerializationPolicy(LongSerializationPolicy.STRING)
             .registerTypeAdapter(Configuration.class, new ConfigurationAdapter())
             .registerTypeAdapter(new TypeToken<ArrayList<Configuration>>() {}.getType(), new ConfigurationListAdapter())
             .registerTypeAdapter(ServerStatus.class, new ServerStatusAdapter())
@@ -40,13 +47,19 @@ public class LeLib {
             .registerTypeAdapter(PteroServer.class, new PteroServerAdapter())
             .create();
 
-    public static Gson GSON_EMPTY = new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.STRING).create();
+    public static Gson GSON_EMPTY = new GsonBuilder()
+            .setLongSerializationPolicy(LongSerializationPolicy.STRING)
+            .create();
 
     public static void main(String[] args) {
-        ArgumentHandler handler = new ArgumentHandler();
-        handler.register(TestArguments.class);
+        LClass clazz = ReflectionUtil.ofClass(Configuration.class);
+        System.out.println(clazz);
 
-        handler.process(args);
+        LField field = clazz.getField("name");
+        System.out.println(field);
+
+        LMethod method = clazz.getMethod("getName");
+        System.out.println(method);
     }
 
 }
