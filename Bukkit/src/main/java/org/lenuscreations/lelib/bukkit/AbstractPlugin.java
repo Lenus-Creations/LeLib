@@ -199,7 +199,7 @@ public class AbstractPlugin extends JavaPlugin {
                         V1_12_R1.getTabHandler().send(p);
                         break;
                     default:
-                        if (Util.getServerVersion() > 1222) {
+                        if (Util.getServerVersion() > 1122) {
                             V1_16_R3.getTabHandler().send(p);
                         } else throw new UnsupportedOperationException("Not yet implemented");
                         break;
