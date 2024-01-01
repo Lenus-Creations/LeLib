@@ -118,7 +118,7 @@ public class AbstractPlugin extends JavaPlugin {
                         V1_12_R1.getTabHandler().setHeader(header);
                         break;
                     default:
-                        if (Util.getServerVersion() > 1222) {
+                        if (Util.getServerVersion() > 1122) {
                             V1_16_R3.getTabHandler().setHeader(header);
                         } else throw new UnsupportedOperationException("Not yet implemented");
                         break;
@@ -135,7 +135,7 @@ public class AbstractPlugin extends JavaPlugin {
                         V1_12_R1.getTabHandler().setFooter(footer);
                         break;
                     default:
-                        if (Util.getServerVersion() > 1222) {
+                        if (Util.getServerVersion() > 1122) {
                             V1_16_R3.getTabHandler().setFooter(footer);
                         } else throw new UnsupportedOperationException("Not yet implemented");
                         break;
