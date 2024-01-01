@@ -31,6 +31,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
@@ -38,6 +39,8 @@ public class AbstractPlugin extends JavaPlugin {
 
     @Getter
     private static AbstractPlugin instance;
+
+    private static final List<Integer> versionIgnores = Arrays.asList(107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120);
 
     @Nullable
     @Getter
@@ -118,7 +121,7 @@ public class AbstractPlugin extends JavaPlugin {
                         V1_12_R1.getTabHandler().setHeader(header);
                         break;
                     default:
-                        if (Util.getServerVersion() > 1122) {
+                        if (Util.getServerVersion() > 1122 || versionIgnores.contains(Util.getServerVersion())) {
                             V1_16_R3.getTabHandler().setHeader(header);
                         } else throw new UnsupportedOperationException("Not yet implemented");
                         break;
@@ -135,7 +138,7 @@ public class AbstractPlugin extends JavaPlugin {
                         V1_12_R1.getTabHandler().setFooter(footer);
                         break;
                     default:
-                        if (Util.getServerVersion() > 1122) {
+                        if (Util.getServerVersion() > 1122 || versionIgnores.contains(Util.getServerVersion())) {
                             V1_16_R3.getTabHandler().setFooter(footer);
                         } else throw new UnsupportedOperationException("Not yet implemented");
                         break;
@@ -183,8 +186,8 @@ public class AbstractPlugin extends JavaPlugin {
             }
         };
 
-        this.addListener(ChatInputListener.class);
         getServer().getPluginManager().registerEvents(new GUIListener(), this);
+        getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
 
         CommandHandler.init();
         //registerCommand(TestCommands.class);
@@ -199,7 +202,7 @@ public class AbstractPlugin extends JavaPlugin {
                         V1_12_R1.getTabHandler().send(p);
                         break;
                     default:
-                        if (Util.getServerVersion() > 1122) {
+                        if (Util.getServerVersion() > 1122 || versionIgnores.contains(Util.getServerVersion())) {
                             V1_16_R3.getTabHandler().send(p);
                         } else throw new UnsupportedOperationException("Not yet implemented");
                         break;

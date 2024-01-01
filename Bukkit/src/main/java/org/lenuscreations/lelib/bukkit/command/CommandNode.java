@@ -33,6 +33,7 @@ public class CommandNode {
     private boolean playerOnly;
     private boolean consoleOnly;
     private boolean async;
+    private boolean ignoreArgs;
 
     private Class<?> clazz;
     private final Method method;
@@ -46,6 +47,7 @@ public class CommandNode {
         this.aliases = ann.aliases();
         this.permission = ann.permission();
         this.async = ann.async();
+        this.ignoreArgs = ann.ignoreArgs();
 
         this.clazz = method.getDeclaringClass();
         this.method = method;
@@ -103,7 +105,7 @@ public class CommandNode {
         ArgumentParser parser = new ArgumentParser(sender);
         Map<Integer, Argument> arguments = parser.parse(args, parameters.toArray(new Parameter[0]));
 
-        if (arguments.size() < method.getParameterCount() - 1 || arguments.size() > method.getParameterCount() - 1) {
+        if (arguments.size() < method.getParameterCount() - 1 || (arguments.size() > method.getParameterCount() - 1 && !ignoreArgs)) {
             this.sendUsageMessage(sender, method.getParameters());
             return;
         }
@@ -114,6 +116,10 @@ public class CommandNode {
         }
 
         for (int i = 0; i < arguments.size(); i++) {
+            if (ignoreArgs && i >= method.getParameterCount() - 1) {
+                break;
+            }
+
             parameterArgs.add(arguments.get(i).getValue());
         }
 

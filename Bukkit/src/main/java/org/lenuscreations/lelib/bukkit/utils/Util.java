@@ -39,17 +39,13 @@ public class Util {
     }
 
     public static int getServerVersion() {
-        Pattern pattern = Pattern.compile("^\\d+\\.\\d+\\.\\d+$");
         String version = Bukkit.getBukkitVersion();
 
-        Matcher matcher = pattern.matcher(version);
-
-        if (matcher.find()) {
-            String numericVersion = matcher.group().replaceAll("\\.", "");
-            return Integer.parseInt(numericVersion);
+        try {
+            return Integer.parseInt(version.split("-")[0].replace(".", ""));
+        } catch (NumberFormatException e) {
+            return -1;
         }
-
-        return -1;
     }
 
 }

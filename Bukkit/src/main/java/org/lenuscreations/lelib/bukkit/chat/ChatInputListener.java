@@ -1,7 +1,9 @@
 package org.lenuscreations.lelib.bukkit.chat;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.lenuscreations.lelib.bukkit.event.EventListener;
@@ -9,11 +11,11 @@ import org.lenuscreations.lelib.bukkit.event.EventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-@EventListener(event = AsyncPlayerChatEvent.class, ignoreCancelled = true, priority = EventPriority.HIGH)
-public class ChatInputListener {
+public class ChatInputListener implements Listener {
 
     public static Map<Player, ChatInput> inputs = new HashMap<>();
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onChat(AsyncPlayerChatEvent e) {
         ChatInput input = inputs.get(e.getPlayer());
         if (input == null) return;

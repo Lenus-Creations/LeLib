@@ -102,7 +102,6 @@ public class CommandHandler {
         LeLibHelpTopic helpTopic = new LeLibHelpTopic(node);
         BukkitCommand bukkitCommand = new BukkitCommand(node);
         map.register(AbstractPlugin.getInstance().getDescription().getName().toLowerCase(), bukkitCommand);
-
     }
 
     public static void registerParameter(Class<?> clazz, ParameterType<?, CommandSender> parameterType) {

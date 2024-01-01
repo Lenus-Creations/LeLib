@@ -19,4 +19,6 @@ public @interface Command {
 
     boolean async() default false;
 
+    boolean ignoreArgs() default true;
+
 }
