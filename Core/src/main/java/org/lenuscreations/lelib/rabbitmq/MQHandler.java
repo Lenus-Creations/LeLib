@@ -59,7 +59,7 @@ public class MQHandler {
         this.listeners = new ArrayList<>();
         this.parameters = new ArrayList<>();
 
-        this.init(packetReceiveMethod);
+        this.init(packetReceiveMethod, true);
     }
 
     public MQHandler(String host, String username, String password, String queue) {
@@ -127,7 +127,7 @@ public class MQHandler {
         this.listeners = new ArrayList<>();
         this.parameters = new ArrayList<>();
 
-        this.init(packetReceiveMethod);
+        this.init(packetReceiveMethod, false);
     }
 
     @SneakyThrows
@@ -144,11 +144,11 @@ public class MQHandler {
         this.listeners = new ArrayList<>();
         this.parameters = new ArrayList<>();
 
-        this.init(packetReceiveMethod);
+        this.init(packetReceiveMethod, false);
     }
 
     @SneakyThrows
-    private void init(MQType packetReceiveMethod) {
+    private void init(MQType packetReceiveMethod, boolean b) {
         this.packetReceiveMethod = packetReceiveMethod;
 
         this.register(
@@ -163,7 +163,7 @@ public class MQHandler {
         this.connection = factory.newConnection();
         this.channel = connection.createChannel();
 
-        channel.queueDeclare(queue, false, false, false, null);
+        channel.queueDeclare(queue, b, false, false, null);
 
         this.start();
     }
