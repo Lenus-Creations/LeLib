@@ -29,18 +29,57 @@ public class MQHandler {
     private MQType packetReceiveMethod;
 
     private final String queue;
-    private final Connection connection;
-    private final Channel channel;
+    private Connection connection;
+    private Channel channel;
 
     public static float MAX_TIMEOUT = 60000.0F;
 
+    @SneakyThrows
+    public MQHandler(String uri, String queue) {
+        this(uri, queue, MQType.GSON);
+    }
+
+    @SneakyThrows
+    public MQHandler(String uri, String queue, int timeout) {
+        this(uri, queue, timeout, MQType.GSON);
+    }
+
+    @SneakyThrows
+    public MQHandler(String uri, String queue, MQType packetReceiveMethod) {
+        this(uri, queue, 60000, packetReceiveMethod);
+    }
+
+    @SneakyThrows
+    public MQHandler(String uri, String queue, int timeout, MQType packetReceiveMethod) {
+        this.queue = queue;
+        this.factory = new ConnectionFactory();
+        factory.setUri(uri);
+        factory.setConnectionTimeout(timeout);
+
+        this.listeners = new ArrayList<>();
+        this.parameters = new ArrayList<>();
+
+        this.init(packetReceiveMethod);
+    }
+
+    public MQHandler(String host, String username, String password, String queue) {
+        this(host, username, password, "/", queue, 60000, MQType.GSON);
+    }
 
     public MQHandler(String host, int port, String username, String password, String queue) {
         this(host, port, username, password, "/", queue, 60000, MQType.GSON);
     }
 
+    public MQHandler(String host, String username, String password, String queue, MQType packetReceiveMethod) {
+        this(host, username, password, "/", queue, 60000, packetReceiveMethod);
+    }
+
     public MQHandler(String host, int port, String username, String password, String queue, MQType packetReceiveMethod) {
         this(host, port, username, password, "/", queue, 60000, packetReceiveMethod);
+    }
+
+    public MQHandler(String host, String username, String password, String vhost, String queue) {
+        this(host, username, password, vhost, queue, 60000, MQType.GSON);
     }
 
     public MQHandler(String host, int port, String username, String password, String vhost, String queue) {
@@ -51,8 +90,16 @@ public class MQHandler {
         this(host, port, username, password, vhost, queue, 60000, packetReceiveMethod);
     }
 
+    public MQHandler(String host, String username, String password, String vhost, String queue, MQType packetReceiveMethod) {
+        this(host, username, password, vhost, queue, 60000, packetReceiveMethod);
+    }
+
     public MQHandler(String host, int port, String username, String password, String queue, int timeout) {
         this(host, port, username, password, "/", queue, timeout, MQType.GSON);
+    }
+
+    public MQHandler(String host, String username, String password, String queue, int timeout, MQType packetReceiveMethod) {
+        this(host, username, password, "/", queue, timeout, packetReceiveMethod);
     }
 
     public MQHandler(String host, int port, String username, String password, String queue, int timeout, MQType packetReceiveMethod) {
@@ -61,6 +108,26 @@ public class MQHandler {
 
     public MQHandler(String host, int port, String username, String password, String vhost, String queue, int timeout) {
         this(host, port, username, password, vhost, queue, timeout, MQType.GSON);
+    }
+
+    public MQHandler(String host, String username, String password, String vhost, String queue, int timeout) {
+        this(host, username, password, vhost, queue, timeout, MQType.GSON);
+    }
+
+    @SneakyThrows
+    public MQHandler(String host, String username, String password, String vhost, String queue, int timeout, MQType packetReceiveMethod) {
+        this.factory = new ConnectionFactory();
+        factory.setHost(host);
+        factory.setUsername(username);
+        factory.setPassword(password);
+        factory.setConnectionTimeout(timeout);
+        factory.setVirtualHost(vhost);
+
+        this.queue = queue;
+        this.listeners = new ArrayList<>();
+        this.parameters = new ArrayList<>();
+
+        this.init(packetReceiveMethod);
     }
 
     @SneakyThrows
@@ -73,10 +140,16 @@ public class MQHandler {
         factory.setConnectionTimeout(timeout);
         factory.setVirtualHost(vhost);
 
-        this.packetReceiveMethod = packetReceiveMethod;
         this.queue = queue;
         this.listeners = new ArrayList<>();
         this.parameters = new ArrayList<>();
+
+        this.init(packetReceiveMethod);
+    }
+
+    @SneakyThrows
+    private void init(MQType packetReceiveMethod) {
+        this.packetReceiveMethod = packetReceiveMethod;
 
         this.register(
                 new StringParameter(),
