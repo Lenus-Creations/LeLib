@@ -13,7 +13,17 @@ public @interface Configuration {
     Type type() default Type.YAML;
 
     enum Type {
-        YAML
+        YAML("yml", "yaml");
+
+        private final String[] extensions;
+
+        Type(String... extensions) {
+            this.extensions = extensions;
+        }
+
+        public String[] getExtensions() {
+            return extensions;
+        }
     }
 
 }

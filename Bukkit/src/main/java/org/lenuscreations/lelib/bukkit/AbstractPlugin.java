@@ -13,12 +13,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.lenuscreations.lelib.bukkit.chat.ChatInputListener;
 import org.lenuscreations.lelib.bukkit.command.CommandHandler;
-import org.lenuscreations.lelib.bukkit.command.test.TestCommands;
+import org.lenuscreations.lelib.bukkit.config.ConfigHandler;
 import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
 import org.lenuscreations.lelib.bukkit.event.EventManager;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
-import org.lenuscreations.lelib.bukkit.gui.old.GUIHandler;
 import org.lenuscreations.lelib.bukkit.nick.NicknameHandler;
+import org.lenuscreations.lelib.bukkit.annotations.ScheduledTask;
 import org.lenuscreations.lelib.bukkit.server.IServer;
 import org.lenuscreations.lelib.bukkit.tag.TagHandler;
 import org.lenuscreations.lelib.bukkit.utils.Util;
@@ -28,11 +28,11 @@ import org.lenuscreations.lelib.utils.ClassUtil;
 import org.lenuscreations.lelib.utils.TimeUtil;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
 public class AbstractPlugin extends JavaPlugin {
@@ -192,6 +192,9 @@ public class AbstractPlugin extends JavaPlugin {
         CommandHandler.init();
         //registerCommand(TestCommands.class);
 
+        ConfigHandler.init(this);
+
+
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 switch (Util.getNMSVersion()) {
@@ -209,6 +212,33 @@ public class AbstractPlugin extends JavaPlugin {
                 }
             }
         }, 10L, 10L);
+    }
+
+    private void initScheduler() {
+        for (Class<?> clazz : ClassUtil.getClassesInPackage(this.getClass(), this.getClass().getPackage().getName())) {
+            for (Method method : clazz.getDeclaredMethods()) {
+                if (!method.isAnnotationPresent(ScheduledTask.class)) continue;
+
+                ScheduledTask task = method.getAnnotation(ScheduledTask.class);
+                if (task.async()) {
+                    getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+                        try {
+                            method.invoke(clazz.getDeclaredConstructor().newInstance());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }, task.delay(), task.interval());
+                } else {
+                    getServer().getScheduler().runTaskTimer(this, () -> {
+                        try {
+                            method.invoke(clazz.getDeclaredConstructor().newInstance());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }, task.delay(), task.interval());
+                }
+            }
+        }
     }
 
     @Override
