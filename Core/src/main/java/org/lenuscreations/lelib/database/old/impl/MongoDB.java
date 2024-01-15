@@ -1,20 +1,17 @@
-package org.lenuscreations.lelib.database.impl;
+package org.lenuscreations.lelib.database.old.impl;
 
 import com.google.gson.JsonObject;
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
-import org.lenuscreations.lelib.LeLib;
-import org.lenuscreations.lelib.database.Credentials;
-import org.lenuscreations.lelib.database.IDatabase;
+import org.lenuscreations.lelib.database.old.Credentials;
+import org.lenuscreations.lelib.database.old.IDatabase;
 
 
+@Deprecated
 public class MongoDB implements IDatabase<JsonObject, JsonObject> {
 
     private Credentials credentials;

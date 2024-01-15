@@ -22,8 +22,8 @@ import org.lenuscreations.lelib.bukkit.annotations.ScheduledTask;
 import org.lenuscreations.lelib.bukkit.server.IServer;
 import org.lenuscreations.lelib.bukkit.tag.TagHandler;
 import org.lenuscreations.lelib.bukkit.utils.Util;
-import org.lenuscreations.lelib.database.Credentials;
-import org.lenuscreations.lelib.database.IDatabase;
+import org.lenuscreations.lelib.database.old.Credentials;
+import org.lenuscreations.lelib.database.old.IDatabase;
 import org.lenuscreations.lelib.utils.ClassUtil;
 import org.lenuscreations.lelib.utils.TimeUtil;
 
