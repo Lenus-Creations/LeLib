@@ -35,6 +35,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+@Plugin(
+        name = "a",
+        version = "b",
+        authors = "c"
+)
 public class AbstractPlugin extends JavaPlugin {
 
     @Getter

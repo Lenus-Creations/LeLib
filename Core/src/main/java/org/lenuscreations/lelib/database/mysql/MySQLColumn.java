@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class MySQLColumn {
 
     private final String name;
