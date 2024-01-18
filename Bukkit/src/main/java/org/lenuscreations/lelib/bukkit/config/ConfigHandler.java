@@ -4,11 +4,14 @@ import lombok.Getter;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
+import org.lenuscreations.lelib.bukkit.annotations.ScheduledTask;
 import org.lenuscreations.lelib.utils.ClassUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class ConfigHandler {
@@ -74,6 +77,38 @@ public class ConfigHandler {
                 };
 
                 plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0, 20L);
+            }
+        }
+    }
+
+    @ScheduledTask(interval = 20L, async = true)
+    public void loadFromConfig() {
+        AbstractPlugin plugin = AbstractPlugin.getInstance();
+        Collection<Class<?>> classes = ClassUtil.getClassesInPackage(plugin.getClass(), plugin.getClass().getPackage().getName());
+        for (Class<?> clazz : classes) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if (!field.isAnnotationPresent(FromConfig.class)) {
+                    continue;
+                }
+
+                FromConfig fromConfig = field.getAnnotation(FromConfig.class);
+                String path = fromConfig.value();
+
+                plugin.reloadConfig();
+
+                org.bukkit.configuration.Configuration configuration = plugin.getConfig();
+                Object value = configuration.get(path);
+
+                try {
+                    field.set(clazz.getDeclaredConstructor().newInstance(), value);
+                } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException |
+                         InstantiationException e) {
+                    try {
+                        field.set(null, value);
+                    } catch (IllegalAccessException illegalAccessException) {
+                        illegalAccessException.printStackTrace();
+                    }
+                }
             }
         }
     }

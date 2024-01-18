@@ -33,21 +33,25 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
-@Plugin(
+/*@Plugin(
         name = "a",
         version = "b",
         authors = "c"
-)
+)*/
 public class AbstractPlugin extends JavaPlugin {
+
+    public static final UUID CONSOLE_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Getter
     private static AbstractPlugin instance;
 
-    private static final List<Integer> versionIgnores = Arrays.asList(107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120);
+    private static final List<Integer> versionIgnores = Arrays.asList(17, 18, 19, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120);
 
     @Nullable
+    @Deprecated
     @Getter
     private IDatabase<?, ?> currentDatabase = null;
 
@@ -198,7 +202,7 @@ public class AbstractPlugin extends JavaPlugin {
         //registerCommand(TestCommands.class);
 
         ConfigHandler.init(this);
-
+        initScheduler();
 
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -271,6 +275,7 @@ public class AbstractPlugin extends JavaPlugin {
         Arrays.asList(clazz).forEach(this::addListener);
     }
 
+    @Deprecated
     @SneakyThrows
     public final void setDatabase(Class<? extends IDatabase<?, ?>> instance, Credentials credentials) {
         this.currentDatabase = instance.getDeclaredConstructor().newInstance();

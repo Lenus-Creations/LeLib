@@ -73,5 +73,4 @@ public class MySQLDatabaseBuilder {
         query.append(")");
         return query;
     }
-
 }

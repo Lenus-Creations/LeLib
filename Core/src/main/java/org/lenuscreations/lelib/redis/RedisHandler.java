@@ -2,6 +2,8 @@ package org.lenuscreations.lelib.redis;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.SneakyThrows;
+import org.lenuscreations.lelib.utils.StringUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
@@ -13,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public class RedisHandler {
 
@@ -21,6 +24,8 @@ public class RedisHandler {
 
     private final String channel;
     private List<RedisListener> listeners;
+
+    private static final float MAX_TIMEOUT = 10000.0F;
 
     public RedisHandler(String uri) {
         this(URI.create(uri), "default");
@@ -93,14 +98,20 @@ public class RedisHandler {
                                 JsonObject response = null;
                                 try {
                                     response = (JsonObject) method.invoke(listener, jsonObject);
-                                } catch (IllegalAccessException | InvocationTargetException e) {
-                                    throw new RuntimeException(e);
+                                } catch (IllegalAccessException | InvocationTargetException ignored) {
+
                                 }
 
                                 if (response == null) break;
+
+                                response.addProperty("responseId", jsonObject.get("responseId").getAsString());
+                                response.addProperty("replied", true);
                                 try (Jedis jedis = jedisPool.getResource()) {
                                     jedis.publish(replyTo, response.toString());
                                 }
+                            } if (jsonObject.has("replied")) {
+                                String responseId = jsonObject.get("responseId").getAsString();
+                                responses.put(responseId, jsonObject);
                             } else {
                                 try {
                                     method.invoke(listener, jsonObject);
@@ -121,7 +132,12 @@ public class RedisHandler {
         }).start();
     }
 
-    public Status sendPacket(Packet packet) {
+    /**
+     * Sends a packet to the default channel
+     * @param packet The packet to send
+     * @return The status of the packet
+     */
+    public Status sendPacket(String channel, Packet packet) {
         JsonObject jsonObject = packet.toJson();
         jsonObject.addProperty("action", packet.action());
         try (Jedis jedis = jedisPool.getResource()) {
@@ -138,6 +154,14 @@ public class RedisHandler {
         return sendPacket(channel, action, jsonObject, false);
     }
 
+    /**
+     * Sends a packet to a channel
+     * @param channel The channel to send the packet to
+     * @param action The action of the packet
+     * @param jsonObject The packet
+     * @param async Whether to send the packet asynchronously
+     * @return The status of the packet
+     */
     public Status sendPacket(String channel, String action, JsonObject jsonObject, boolean async) {
         jsonObject.addProperty("action", action);
         try (Jedis jedis = jedisPool.getResource()) {
@@ -150,17 +174,43 @@ public class RedisHandler {
         return Status.SUCCESS;
     }
 
+    /**
+     * Sends a packet and waits for a response
+     * @param channel The channel to send the packet to
+     * @param packet The packet to send
+     * @return The response
+     */
+    @SneakyThrows
     public JsonObject get(String channel, Packet packet) {
         JsonObject jsonObject = packet.toJson();
         jsonObject.addProperty("action", packet.action());
         jsonObject.addProperty("replyTo", this.channel);
+
+        String responseId = StringUtil.randomString(12, true);
+        jsonObject.addProperty("responseId", responseId);
 
         try (Jedis jedis = jedisPool.getResource()) {
             if (packet.async()) new Thread(() -> jedis.publish(channel, jsonObject.toString())).start();
             else jedis.publish(channel, jsonObject.toString());
         }
 
-        return null;
+        float time = 0.0F;
+        while (!responses.containsKey(responseId)) {
+            Thread.sleep(10);
+            time += 10.0F;
+
+            if (time >= MAX_TIMEOUT) {
+                break;
+            }
+        }
+
+        if (responses.containsKey(responseId)) {
+            JsonObject response = responses.get(responseId);
+            responses.remove(responseId);
+            return response;
+        }
+
+        throw new TimeoutException("[REDIS] Response timed out for packet with response id of '" + responseId + "'.");
     }
 
     private final Map<String, JsonObject> responses = new HashMap<>();
