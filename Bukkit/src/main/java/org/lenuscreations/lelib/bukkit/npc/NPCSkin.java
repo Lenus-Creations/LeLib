@@ -27,7 +27,7 @@ public class NPCSkin {
         Map<String, String> skin = MojangUtils.getProfileProperties(uuid, false).get(0);
         if (skin.get("name") != "textures") return null;
 
-        return new NPCSkin(skin.get("name"), skin.get("value"), skin.get("signature"));
+        return new NPCSkin(name, skin.get("value"), skin.get("signature"));
     }
 
 }

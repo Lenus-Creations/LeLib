@@ -102,7 +102,7 @@ public class NPCHandler {
             case "1_8_R3":
                 NPC_1_8_R3 npc_1_8_r3 = new NPC_1_8_R3(location, name, skin);
                 npc_1_8_r3.spawn();
-                
+
                 data = new NPCData(npcs.size(), npc_1_8_r3);
                 break;
         }
