@@ -1,6 +1,5 @@
 package org.lenuscreations.lelib.bukkit.tag;
 
-import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -8,7 +7,6 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
-import org.lenuscreations.lelib.bukkit.disguise.Disguise;
 import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
 import org.lenuscreations.lelib.bukkit.tag.event.TagChangeEvent;
 import org.lenuscreations.lelib.bukkit.tag.event.TagClearEvent;

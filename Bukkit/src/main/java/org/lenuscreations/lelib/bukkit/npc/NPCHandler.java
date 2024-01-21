@@ -72,7 +72,7 @@ public class NPCHandler {
                     data = new NPCData(Integer.parseInt(id), new NPC_1_8_R3(
                             new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch),
                             Util.format(name),
-                            npcSkin
+                            (npcSkin == null ? null : npcSkin.toJson())
                     ));
                     break;
             }

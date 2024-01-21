@@ -1,22 +1,18 @@
 package dev.grcq.v1_8_r3.npc;
 
+import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PlayerInteractManager;
 import net.minecraft.server.v1_8_R3.WorldServer;
 import org.apache.commons.lang3.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lenuscreations.lelib.bukkit.npc.NPCSkin;
 
 import java.util.UUID;
 
@@ -34,11 +30,11 @@ public class NPC_1_8_R3 {
     private EntityPlayer npc;
 
     @Nullable
-    private NPCSkin skin;
+    private JsonObject skin;
 
     private boolean spawned = false;
 
-    public NPC_1_8_R3(@NotNull Location location, @NotNull String name, @Nullable NPCSkin skin) {
+    public NPC_1_8_R3(@NotNull Location location, @NotNull String name, @Nullable JsonObject skin) {
         Validate.notNull(name, "Name cannot be null");
         Validate.notNull(location, "Location cannot be null");
         Validate.isTrue(!name.isEmpty() && name.length() < 16, "Name must be between 1 and 16 characters");
@@ -56,7 +52,7 @@ public class NPC_1_8_R3 {
 
         this.gameProfile = new GameProfile(UUID.randomUUID(), this.name);
         if (this.skin != null) {
-            this.gameProfile.getProperties().put("textures", new Property("textures", this.skin.getValue(), this.skin.getSignature()));
+            this.gameProfile.getProperties().put("textures", new Property("textures", this.skin.get("value").getAsString(), this.skin.get("signature").getAsString()));
         }
 
         this.npc = new EntityPlayer(server, world, gameProfile, new PlayerInteractManager(world));
@@ -95,7 +91,7 @@ public class NPC_1_8_R3 {
         spawn();
     }
 
-    public void setSkin(NPCSkin skin) {
+    public void setSkin(JsonObject skin) {
         Validate.isTrue(this.spawned, "NPC is not spawned");
         Validate.notNull(skin, "Skin cannot be null");
 

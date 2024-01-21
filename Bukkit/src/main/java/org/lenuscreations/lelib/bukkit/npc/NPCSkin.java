@@ -1,5 +1,6 @@
 package org.lenuscreations.lelib.bukkit.npc;
 
+import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.lenuscreations.lelib.bukkit.utils.MojangUtils;
@@ -28,6 +29,14 @@ public class NPCSkin {
         if (skin.get("name") != "textures") return null;
 
         return new NPCSkin(name, skin.get("value"), skin.get("signature"));
+    }
+
+    public JsonObject toJson() {
+        JsonObject object = new JsonObject();
+        object.addProperty("name", this.name);
+        object.addProperty("value", this.value);
+        object.addProperty("signature", this.signature);
+        return object;
     }
 
 }

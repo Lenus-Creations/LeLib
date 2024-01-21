@@ -1,6 +1,5 @@
 package org.lenuscreations.lelib.bukkit.config;
 
-import lombok.Getter;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
@@ -11,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 public class ConfigHandler {

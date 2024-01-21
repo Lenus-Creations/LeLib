@@ -3,7 +3,6 @@ package org.lenuscreations.lelib.bukkit.command;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.help.HelpTopic;
-import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 
 public class LeLibHelpTopic extends HelpTopic {
 

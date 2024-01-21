@@ -2,8 +2,6 @@ package org.lenuscreations.lelib.bukkit.minigame;
 
 import org.lenuscreations.lelib.bukkit.minigame.profile.GameProfile;
 
-import java.util.List;
-
 public interface MinigameAPI {
 
     void onStart();

@@ -5,11 +5,9 @@ import org.bukkit.command.CommandSender;
 import org.lenuscreations.lelib.bukkit.utils.Util;
 import org.lenuscreations.lelib.command.ParameterType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class BooleanParameter implements ParameterType<Boolean, CommandSender> {
 

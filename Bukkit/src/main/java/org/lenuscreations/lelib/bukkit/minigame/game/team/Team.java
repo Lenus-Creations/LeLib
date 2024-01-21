@@ -2,7 +2,6 @@ package org.lenuscreations.lelib.bukkit.minigame.game.team;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.ChatColor;
 import org.lenuscreations.lelib.bukkit.minigame.profile.GameProfile;
 
