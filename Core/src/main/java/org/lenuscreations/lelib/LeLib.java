@@ -52,14 +52,14 @@ public class LeLib {
             .create();
 
     public static void main(String[] args) {
-        LClass clazz = ReflectionUtil.ofClass(Configuration.class);
+        /*LClass clazz = ReflectionUtil.ofClass(Configuration.class);
         System.out.println(clazz);
 
         LField field = clazz.getField("name");
         System.out.println(field);
 
         LMethod method = clazz.getMethod("getName");
-        System.out.println(method);
+        System.out.println(method);*/
     }
 
 }

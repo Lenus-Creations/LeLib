@@ -1,15 +1,15 @@
-package org.lenuscreations.lelib.database.impl;
+package org.lenuscreations.lelib.database.old.impl;
 
-import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
-import org.lenuscreations.lelib.database.Credentials;
-import org.lenuscreations.lelib.database.IDatabase;
+import org.lenuscreations.lelib.database.old.Credentials;
+import org.lenuscreations.lelib.database.old.IDatabase;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+@Deprecated
 public class MySQL implements IDatabase<ResultSet, String> {
 
     private Connection connection;

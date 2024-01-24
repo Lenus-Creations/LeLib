@@ -31,6 +31,37 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>process</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <outputDirectory>${generated.sources.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <version>2.2.4</version>
+                <configuration>
+                    <processors>
+                        <processor>org.lenuscreations.lelib.bukkit.processor.PluginInfoProcessor</processor>
+                    </processors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>process</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -103,6 +134,11 @@
             <artifactId>v1_16_R3</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 </project>

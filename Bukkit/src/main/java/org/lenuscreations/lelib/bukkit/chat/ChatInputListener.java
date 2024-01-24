@@ -6,7 +6,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.lenuscreations.lelib.bukkit.event.EventListener;
 
 import java.util.HashMap;
 import java.util.Map;

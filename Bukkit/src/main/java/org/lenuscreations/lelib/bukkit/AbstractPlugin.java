@@ -11,38 +11,49 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import org.lenuscreations.lelib.bukkit.annotations.ScheduledTask;
 import org.lenuscreations.lelib.bukkit.chat.ChatInputListener;
 import org.lenuscreations.lelib.bukkit.command.CommandHandler;
 import org.lenuscreations.lelib.bukkit.command.test.TestCommands;
+import org.lenuscreations.lelib.bukkit.config.ConfigHandler;
 import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
 import org.lenuscreations.lelib.bukkit.event.EventManager;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
-import org.lenuscreations.lelib.bukkit.gui.old.GUIHandler;
 import org.lenuscreations.lelib.bukkit.nick.NicknameHandler;
+import org.lenuscreations.lelib.bukkit.npc.NPCHandler;
 import org.lenuscreations.lelib.bukkit.server.IServer;
 import org.lenuscreations.lelib.bukkit.tag.TagHandler;
 import org.lenuscreations.lelib.bukkit.utils.Util;
-import org.lenuscreations.lelib.database.Credentials;
-import org.lenuscreations.lelib.database.IDatabase;
+import org.lenuscreations.lelib.database.old.Credentials;
+import org.lenuscreations.lelib.database.old.IDatabase;
 import org.lenuscreations.lelib.utils.ClassUtil;
 import org.lenuscreations.lelib.utils.TimeUtil;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.FileHandler;
+import java.util.UUID;
 import java.util.logging.Level;
 
+@Plugin(
+        name = "TestPluginLib",
+        version = "1.0",
+        authors = "grcq"
+)
 public class AbstractPlugin extends JavaPlugin {
+
+    public static final UUID CONSOLE_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Getter
     private static AbstractPlugin instance;
 
-    private static final List<Integer> versionIgnores = Arrays.asList(107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120);
+    private static final List<Integer> versionIgnores = Arrays.asList(17, 18, 19, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120);
 
     @Nullable
+    @Deprecated
     @Getter
     private IDatabase<?, ?> currentDatabase = null;
 
@@ -54,6 +65,8 @@ public class AbstractPlugin extends JavaPlugin {
     private TagHandler tagHandler;
     @Getter
     private NicknameHandler nicknameHandler;
+    @Getter
+    private NPCHandler npcHandler;
 
     public IServer server;
 
@@ -67,6 +80,7 @@ public class AbstractPlugin extends JavaPlugin {
         this.disguiseHandler = new DisguiseHandler();
         this.tagHandler = new TagHandler();
         this.nicknameHandler = new NicknameHandler();
+        this.npcHandler = new NPCHandler();
         this.server = new IServer() {
 
             @Override
@@ -190,7 +204,10 @@ public class AbstractPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
 
         CommandHandler.init();
-        //registerCommand(TestCommands.class);
+        registerCommand(TestCommands.class);
+
+        ConfigHandler.init(this);
+        initScheduler();
 
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -209,6 +226,33 @@ public class AbstractPlugin extends JavaPlugin {
                 }
             }
         }, 10L, 10L);
+    }
+
+    private void initScheduler() {
+        for (Class<?> clazz : ClassUtil.getClassesInPackage(this.getClass(), this.getClass().getPackage().getName())) {
+            for (Method method : clazz.getDeclaredMethods()) {
+                if (!method.isAnnotationPresent(ScheduledTask.class)) continue;
+
+                ScheduledTask task = method.getAnnotation(ScheduledTask.class);
+                if (task.async()) {
+                    getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+                        try {
+                            method.invoke(clazz.getDeclaredConstructor().newInstance());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }, task.delay(), task.interval());
+                } else {
+                    getServer().getScheduler().runTaskTimer(this, () -> {
+                        try {
+                            method.invoke(clazz.getDeclaredConstructor().newInstance());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }, task.delay(), task.interval());
+                }
+            }
+        }
     }
 
     @Override
@@ -236,6 +280,7 @@ public class AbstractPlugin extends JavaPlugin {
         Arrays.asList(clazz).forEach(this::addListener);
     }
 
+    @Deprecated
     @SneakyThrows
     public final void setDatabase(Class<? extends IDatabase<?, ?>> instance, Credentials credentials) {
         this.currentDatabase = instance.getDeclaredConstructor().newInstance();

@@ -1,5 +1,6 @@
-package org.lenuscreations.lelib.database;
+package org.lenuscreations.lelib.database.old;
 
+@Deprecated
 public interface Credentials {
 
     String getUsername();

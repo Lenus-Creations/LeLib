@@ -1,14 +1,12 @@
 package org.lenuscreations.lelib.bukkit.event;
 
-import lombok.SneakyThrows;
 import org.bukkit.event.Listener;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
+@Deprecated
 public class EventManager {
 
     public void register(Class<?> clazz) {

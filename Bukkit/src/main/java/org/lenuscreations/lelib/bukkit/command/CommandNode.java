@@ -7,11 +7,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
+import org.lenuscreations.lelib.bukkit.annotations.Cooldown;
 import org.lenuscreations.lelib.bukkit.command.arguments.Argument;
 import org.lenuscreations.lelib.bukkit.command.arguments.ArgumentParser;
 import org.lenuscreations.lelib.bukkit.command.arguments.ArgumentType;
+import org.lenuscreations.lelib.bukkit.utils.CooldownUtils;
 import org.lenuscreations.lelib.bukkit.utils.Util;
 import org.lenuscreations.lelib.command.*;
 
@@ -19,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.lenuscreations.lelib.utils.StringUtil.shift;
 
@@ -121,6 +121,25 @@ public class CommandNode {
             }
 
             parameterArgs.add(arguments.get(i).getValue());
+        }
+
+        if (method.isAnnotationPresent(Cooldown.class)) {
+            Cooldown cooldown = method.getAnnotation(Cooldown.class);
+            if (cooldown.value() > 0) {
+                UUID uuid = (sender instanceof Player ? ((Player) sender).getUniqueId() : AbstractPlugin.CONSOLE_UUID);
+
+                if (CooldownUtils.hasCooldown(name, uuid)) {
+                    sender.sendMessage(Util.format(
+                            String.format(
+                                    cooldown.message(),
+                                    CooldownUtils.getRemainingText(name, uuid)
+                            )
+                    ));
+                    return;
+                }
+
+                CooldownUtils.setCooldown(name, uuid, cooldown.value());
+            }
         }
 
         if (async) {

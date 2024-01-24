@@ -3,7 +3,6 @@ package org.lenuscreations.lelib.bukkit.command.parameters;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.lenuscreations.lelib.bukkit.utils.Util;
 import org.lenuscreations.lelib.command.ParameterType;
 

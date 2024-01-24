@@ -32,6 +32,11 @@ public class TimeUtil {
         return TIME_FORMAT.format(new Date(millis));
     }
 
+    /**
+     * Converts seconds to a formatted string
+     * @param secs The seconds to convert
+     * @return The formatted string
+     */
     public static String secondsToFormattedString(int secs) {
         if (secs <= 0) return "0 seconds";
 
