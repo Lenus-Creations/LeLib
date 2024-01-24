@@ -2,6 +2,13 @@ package org.lenuscreations.lelib.bukkit.command.test;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.lenuscreations.lelib.bukkit.AbstractPlugin;
+import org.lenuscreations.lelib.bukkit.disguise.Disguise;
+import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
+import org.lenuscreations.lelib.bukkit.npc.NPCHandler;
+import org.lenuscreations.lelib.bukkit.npc.NPCSkin;
+import org.lenuscreations.lelib.bukkit.tag.TagHandler;
+import org.lenuscreations.lelib.bukkit.utils.PlayerUtils;
 import org.lenuscreations.lelib.command.Arg;
 import org.lenuscreations.lelib.command.Command;
 import org.lenuscreations.lelib.command.Flag;
@@ -79,6 +86,14 @@ public class TestCommands {
         DisguiseHandler disguiseHandler = AbstractPlugin.getInstance().getDisguiseHandler();
 
         disguiseHandler.disguise(new Disguise(PlayerUtils.getUUID(name), name, player.getUniqueId(), player.getName()));
+    }
+
+    @Command(name = "npctest")
+    public void npcTest(Player player, @FlagValue(valueName = "skin name", flagName = "s") String skinName, @Arg(name = "name") String name) {
+        NPCHandler npcHandler = AbstractPlugin.getInstance().getNpcHandler();
+        NPCSkin skin = NPCSkin.fromName(skinName == null ? name : skinName);
+
+        npcHandler.createNPC(name, player.getLocation(), skin);
     }
 
 }

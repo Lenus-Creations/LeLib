@@ -15,7 +15,7 @@ import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 import org.lenuscreations.lelib.bukkit.utils.ClassUtils;
 import org.lenuscreations.lelib.command.Command;
 import org.lenuscreations.lelib.command.ParameterType;
-import org.lenuscreations.lelib.command.parameters.*;
+import org.lenuscreations.lelib.bukkit.command.parameters.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

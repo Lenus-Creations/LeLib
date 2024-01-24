@@ -4,6 +4,7 @@ import dev.grcq.v1_8_r3.npc.NPC_1_8_R3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Nullable;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 import org.lenuscreations.lelib.bukkit.utils.Util;
 
@@ -19,6 +20,7 @@ public class NPCHandler {
 
     public NPCHandler() {
         this.npcs = new ArrayList<>();
+
         this.loadNPCs();
         this.spawnNPCs();
     }
@@ -100,7 +102,7 @@ public class NPCHandler {
         NPCData data = null;
         switch (Util.getNMSVersion()) {
             case "1_8_R3":
-                NPC_1_8_R3 npc_1_8_r3 = new NPC_1_8_R3(location, name, skin);
+                NPC_1_8_R3 npc_1_8_r3 = new NPC_1_8_R3(location, name, skin.toJson());
                 npc_1_8_r3.spawn();
 
                 data = new NPCData(npcs.size(), npc_1_8_r3);
@@ -112,6 +114,15 @@ public class NPCHandler {
 
     public void createNPC(String name, Location location) {
         createNPC(name, location, null);
+    }
+
+    @Nullable
+    public NPCData getNPC(int id) {
+        return npcs.stream().filter(npc -> npc.getId() == id).findFirst().orElse(null);
+    }
+
+    public NPCData[] getNPC(String name) {
+        return npcs.stream().filter(npc -> npc.getName().equalsIgnoreCase(name)).toArray(NPCData[]::new);
     }
 
 }

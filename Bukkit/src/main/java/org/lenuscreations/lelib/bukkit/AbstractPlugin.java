@@ -14,11 +14,13 @@ import org.jetbrains.annotations.Nullable;
 import org.lenuscreations.lelib.bukkit.annotations.ScheduledTask;
 import org.lenuscreations.lelib.bukkit.chat.ChatInputListener;
 import org.lenuscreations.lelib.bukkit.command.CommandHandler;
+import org.lenuscreations.lelib.bukkit.command.test.TestCommands;
 import org.lenuscreations.lelib.bukkit.config.ConfigHandler;
 import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
 import org.lenuscreations.lelib.bukkit.event.EventManager;
 import org.lenuscreations.lelib.bukkit.gui.GUIListener;
 import org.lenuscreations.lelib.bukkit.nick.NicknameHandler;
+import org.lenuscreations.lelib.bukkit.npc.NPCHandler;
 import org.lenuscreations.lelib.bukkit.server.IServer;
 import org.lenuscreations.lelib.bukkit.tag.TagHandler;
 import org.lenuscreations.lelib.bukkit.utils.Util;
@@ -36,11 +38,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
-/*@Plugin(
-        name = "a",
-        version = "b",
-        authors = "c"
-)*/
+@Plugin(
+        name = "TestPluginLib",
+        version = "1.0",
+        authors = "grcq"
+)
 public class AbstractPlugin extends JavaPlugin {
 
     public static final UUID CONSOLE_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
@@ -63,6 +65,8 @@ public class AbstractPlugin extends JavaPlugin {
     private TagHandler tagHandler;
     @Getter
     private NicknameHandler nicknameHandler;
+    @Getter
+    private NPCHandler npcHandler;
 
     public IServer server;
 
@@ -76,6 +80,7 @@ public class AbstractPlugin extends JavaPlugin {
         this.disguiseHandler = new DisguiseHandler();
         this.tagHandler = new TagHandler();
         this.nicknameHandler = new NicknameHandler();
+        this.npcHandler = new NPCHandler();
         this.server = new IServer() {
 
             @Override
@@ -199,7 +204,7 @@ public class AbstractPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
 
         CommandHandler.init();
-        //registerCommand(TestCommands.class);
+        registerCommand(TestCommands.class);
 
         ConfigHandler.init(this);
         initScheduler();
