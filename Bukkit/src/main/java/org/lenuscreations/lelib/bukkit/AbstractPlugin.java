@@ -204,7 +204,7 @@ public class AbstractPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
 
         CommandHandler.init();
-        registerCommand(TestCommands.class);
+        //registerCommand(TestCommands.class);
 
         ConfigHandler.init(this);
         initScheduler();
