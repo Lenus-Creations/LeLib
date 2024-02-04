@@ -11,10 +11,10 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import org.lenuscreations.lelib.bukkit.annotations.Inject;
 import org.lenuscreations.lelib.bukkit.annotations.ScheduledTask;
 import org.lenuscreations.lelib.bukkit.chat.ChatInputListener;
 import org.lenuscreations.lelib.bukkit.command.CommandHandler;
-import org.lenuscreations.lelib.bukkit.command.test.TestCommands;
 import org.lenuscreations.lelib.bukkit.config.ConfigHandler;
 import org.lenuscreations.lelib.bukkit.disguise.DisguiseHandler;
 import org.lenuscreations.lelib.bukkit.event.EventManager;
@@ -24,60 +24,36 @@ import org.lenuscreations.lelib.bukkit.npc.NPCHandler;
 import org.lenuscreations.lelib.bukkit.server.IServer;
 import org.lenuscreations.lelib.bukkit.tag.TagHandler;
 import org.lenuscreations.lelib.bukkit.utils.Util;
-import org.lenuscreations.lelib.database.old.Credentials;
 import org.lenuscreations.lelib.database.old.IDatabase;
 import org.lenuscreations.lelib.utils.ClassUtil;
 import org.lenuscreations.lelib.utils.TimeUtil;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
-/*@Plugin(
-        name = "TestPluginLib",
-        version = "1.0",
-        authors = "grcq"
-)*/
-public class AbstractPlugin extends JavaPlugin {
-
-    public static final UUID CONSOLE_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
-
-    @Getter
-    private static AbstractPlugin instance;
+public class Initialiser {
 
     private static final List<Integer> versionIgnores = Arrays.asList(17, 18, 19, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120);
 
-    @Nullable
-    @Deprecated
-    @Getter
-    private IDatabase<?, ?> currentDatabase = null;
-
-    @Deprecated
-    @Getter
-    private EventManager eventHandler;
-    @Getter
     private DisguiseHandler disguiseHandler;
-    @Getter
     private TagHandler tagHandler;
-    @Getter
     private NicknameHandler nicknameHandler;
-    @Getter
     private NPCHandler npcHandler;
 
     public IServer server;
 
-    @Override
-    public void onEnable() {
-        super.onEnable();
+    private Object object;
 
-        instance = this;
+    public void onEnable(JavaPlugin plugin, Class<?> _clazz) {
+        plugin.onEnable();
 
-        this.eventHandler = new EventManager();
         this.disguiseHandler = new DisguiseHandler();
         this.tagHandler = new TagHandler();
         this.nicknameHandler = new NicknameHandler();
@@ -201,16 +177,16 @@ public class AbstractPlugin extends JavaPlugin {
             }
         };
 
-        getServer().getPluginManager().registerEvents(new GUIListener(), this);
-        getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
+        plugin.getServer().getPluginManager().registerEvents(new GUIListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new ChatInputListener(), plugin);
 
         CommandHandler.init();
         //registerCommand(TestCommands.class);
 
-        ConfigHandler.init(this);
-        initScheduler();
+        ConfigHandler.init(plugin);
+        initScheduler(plugin, _clazz);
 
-        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 switch (Util.getNMSVersion()) {
                     case "v1_8_R3":
@@ -229,14 +205,14 @@ public class AbstractPlugin extends JavaPlugin {
         }, 10L, 10L);
     }
 
-    private void initScheduler() {
-        for (Class<?> clazz : ClassUtil.getClassesInPackage(this.getClass(), this.getClass().getPackage().getName())) {
+    private void initScheduler(JavaPlugin plugin, Class<?> _clazz) {
+        for (Class<?> clazz : ClassUtil.getClassesInPackage(_clazz, _clazz.getPackage().getName())) {
             for (Method method : clazz.getDeclaredMethods()) {
                 if (!method.isAnnotationPresent(ScheduledTask.class)) continue;
 
                 ScheduledTask task = method.getAnnotation(ScheduledTask.class);
                 if (task.async()) {
-                    getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+                    plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
                         try {
                             method.invoke(clazz.getDeclaredConstructor().newInstance());
                         } catch (Exception e) {
@@ -244,7 +220,7 @@ public class AbstractPlugin extends JavaPlugin {
                         }
                     }, task.delay(), task.interval());
                 } else {
-                    getServer().getScheduler().runTaskTimer(this, () -> {
+                    plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
                         try {
                             method.invoke(clazz.getDeclaredConstructor().newInstance());
                         } catch (Exception e) {
@@ -256,37 +232,92 @@ public class AbstractPlugin extends JavaPlugin {
         }
     }
 
-    @Override
-    public void onDisable() {
-        super.onDisable();
-    }
-
-    public final void registerCommand(Class<?> clazz) {
-        CommandHandler.register(clazz);
-    }
-
-    public final void registerCommand(Class<?>... clazz) {
-        Arrays.asList(clazz).forEach(this::registerCommand);
-    }
-
-    public final void registerCommands(AbstractPlugin plugin) {
-        ClassUtil.getClassesInPackage(plugin.getClass(), plugin.getClass().getPackage().getName()).forEach(this::registerCommand);
-    }
-
-    public final void addListener(Class<?> clazz) {
-        this.eventHandler.register(clazz);
-    }
-
-    public final void addListener(Class<?>... clazz) {
-        Arrays.asList(clazz).forEach(this::addListener);
-    }
-
-    @Deprecated
     @SneakyThrows
-    public final void setDatabase(Class<? extends IDatabase<?, ?>> instance, Credentials credentials) {
-        this.currentDatabase = instance.getDeclaredConstructor().newInstance();
-        this.currentDatabase.setCredentials(credentials);
-        getLogger().info("The database has been set to " + this.currentDatabase + ".");
+    public void initialise(JavaPlugin plugin, Class<?> mainClass) {
+        this.onEnable(plugin, mainClass);
+
+        object = mainClass.getDeclaredConstructor().newInstance();
+        Field[] fields = mainClass.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Inject.class)) {
+                field.setAccessible(true);
+                switch (field.getType().getSimpleName()) {
+                    case "IServer":
+                        field.set(object, this.server);
+                        break;
+                    case "DisguiseHandler":
+                        field.set(object, this.disguiseHandler);
+                        break;
+                    case "TagHandler":
+                        field.set(object, this.tagHandler);
+                        break;
+                    case "NicknameHandler":
+                        field.set(object, this.nicknameHandler);
+                        break;
+                    case "NPCHandler":
+                        field.set(object, this.npcHandler);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported type for injection: " + field.getType().getSimpleName());
+                }
+            }
+        }
+
+        Method[] methods = mainClass.getDeclaredMethods();
+        for (Method method : methods) {
+            if (!method.isAnnotationPresent(Inject.class)) continue;
+
+            Inject inject = method.getAnnotation(Inject.class);
+            if (inject.whenDisabled()) continue;
+
+            inject(plugin, method);
+        }
+    }
+
+    @SneakyThrows
+    public void disable(JavaPlugin plugin, Class<?> _clazz) {
+        plugin.onDisable();
+
+        Method[] methods = _clazz.getDeclaredMethods();
+        for (Method method : methods) {
+            if (!method.isAnnotationPresent(Inject.class)) continue;
+
+            Inject inject = method.getAnnotation(Inject.class);
+            if (!inject.whenDisabled()) continue;
+
+            inject(plugin, method);
+        }
+    }
+
+    private void inject(JavaPlugin plugin, Method method) throws IllegalAccessException, InvocationTargetException {
+        method.setAccessible(true);
+        List<Object> params = new ArrayList<>();
+        for (Class<?> param : method.getParameterTypes()) {
+            switch (param.getSimpleName()) {
+                case "IServer":
+                    params.add(this.server);
+                    break;
+                case "DisguiseHandler":
+                    params.add(this.disguiseHandler);
+                    break;
+                case "TagHandler":
+                    params.add(this.tagHandler);
+                    break;
+                case "NicknameHandler":
+                    params.add(this.nicknameHandler);
+                    break;
+                case "NPCHandler":
+                    params.add(this.npcHandler);
+                    break;
+                case "JavaPlugin":
+                    params.add(plugin);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported type for injection: " + param.getSimpleName());
+            }
+        }
+
+        method.invoke(object, params.toArray());
     }
 
 }

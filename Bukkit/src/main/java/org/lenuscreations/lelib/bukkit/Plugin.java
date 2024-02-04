@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface Plugin {
 
@@ -14,6 +14,8 @@ public @interface Plugin {
     String[] authors();
     String description() default "";
     String website() default "";
+
+    String generatedClassName() default "Generated";
 
     String[] depend() default {};
     String[] softDepend() default {};

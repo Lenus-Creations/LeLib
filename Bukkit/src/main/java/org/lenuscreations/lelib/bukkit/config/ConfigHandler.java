@@ -2,6 +2,7 @@ package org.lenuscreations.lelib.bukkit.config;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.lenuscreations.lelib.bukkit.AbstractPlugin;
 import org.lenuscreations.lelib.bukkit.annotations.ScheduledTask;
 import org.lenuscreations.lelib.utils.ClassUtil;
@@ -16,7 +17,7 @@ public class ConfigHandler {
 
     private static final List<Runnable> configs = new ArrayList<>();
 
-    public static void init(AbstractPlugin plugin) {
+    public static void init(JavaPlugin plugin) {
         Collection<Class<?>> classes = ClassUtil.getClassesInPackage(plugin.getClass(), plugin.getClass().getPackage().getName());
         for (Class<?> clazz : classes) {
             if (clazz.isAnnotationPresent(Configuration.class)) {
